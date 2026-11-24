@@ -1,0 +1,17 @@
+---
+import Layout from '../../layouts/CatalogLayout.astro';
+import { wiki, fmtDate, recentChanges, withBase, catLabel } from '../../lib/wiki';
+const B = '/proposal-c';
+const { logs, bySlug } = wiki();
+const evs = [...logs.map((l) => ({ k: 'log', d: l.date + 'T23:59:00Z', l })), ...recentChanges(60).map((c) => ({ k: 'rev', d: c.date, c }))].sort((a: any, b: any) => b.d.localeCompare(a.d)) as any[];
+---
+<Layout title="Field log" active="feed">
+  <div class="hd"><div><span class="lab g">Field log</span><h1>Observations, newest first</h1><p>Dispatches from each research pass and every revision to the catalogue, with the entries it touched.</p></div></div>
+  <div class="feedwrap">
+    {evs.map((e) => e.k === 'log' ? (
+      <div class="feedrow" id={e.l.slug}><time>{fmtDate(e.l.date)}</time><span><span class="cls organism">Dispatch</span></span><div><h3>{e.l.title}</h3><p>{e.l.summary}</p><details><summary>Read dispatch</summary><div class="prose" set:html={withBase(e.l.html, B)} /></details></div></div>
+    ) : (
+      <div class="feedrow"><time>{fmtDate(e.c.date, 'short')} · {e.c.hash}</time><span><span class="cls">Revision</span></span><div><h3>{e.c.subject.replace(/^wiki\([^)]*\):\s*/, '')}</h3>{e.c.slugs.length > 0 && <div class="chips">{e.c.slugs.slice(0, 10).map((s: string) => <a class={`cls ${bySlug.get(s)!.category}`} href={`${B}/wiki/${s}`}>{bySlug.get(s)!.title.slice(0, 32)}</a>)}{e.c.slugs.length > 10 && <span class="cls">+{e.c.slugs.length - 10}</span>}</div>}</div></div>
+    ))}
+  </div>
+</Layout>

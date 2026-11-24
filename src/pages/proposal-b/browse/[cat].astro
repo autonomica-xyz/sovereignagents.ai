@@ -1,0 +1,14 @@
+---
+import Layout from '../../../layouts/AtlasLayout.astro';
+import { categories, byCategory } from '../../../lib/wiki';
+import { ATLAS_COLORS } from '../../../lib/colors';
+export const getStaticPaths = () => categories().map((c) => ({ params: { cat: c.id }, props: { c } }));
+const { c } = Astro.props as any;
+const B = '/proposal-b';
+const items = byCategory(c.id).sort((a, b) => b.backlinks.length - a.backlinks.length);
+const max = Math.max(1, ...items.map((a) => a.backlinks.length));
+---
+<Layout title={c.plural} active="browse">
+  <div class="page-h" style={`--c:${ATLAS_COLORS[c.id]}`}><a class="chip" href={`${B}/browse`} style={`--c:${ATLAS_COLORS[c.id]}`}><i></i>Regions</a><h1>{c.plural}</h1><p>{c.blurb} Sorted by how often the rest of the wiki cites them.</p></div>
+  <div class="plist">{items.map((a) => <a href={`${B}/wiki/${a.slug}`} style={`--c:${ATLAS_COLORS[c.id]}`}><h3>{a.title}</h3><p>{a.summary}</p><div class="deg"><span style={`width:${Math.max(4, (a.backlinks.length / max) * 160)}px`}></span>{a.backlinks.length} inbound</div></a>)}</div>
+</Layout>

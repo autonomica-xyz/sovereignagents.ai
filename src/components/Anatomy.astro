@@ -1,0 +1,62 @@
+---
+import { organs } from '../lib/organism';
+import { ATLAS_COLORS } from '../lib/colors';
+import { catLabel } from '../lib/wiki';
+interface Props { base: string }
+const { base } = Astro.props;
+const list = organs();
+const COL: Record<string, string> = { brain: '#4fd2ff', membrane: '#b79bff', keys: '#ffcf4a', metabolism: '#6cf0a0', body: '#5b8cff', nerves: '#f3a5c8', memory: '#7fd8c9', germline: '#ff5d73', immune: '#ff7b3a' };
+const ANG: Record<string, number> = { brain: -90, nerves: -42, membrane: 4, body: 48, germline: 92, immune: 136, memory: 182, metabolism: 228 };
+const pos = (id: string) => id === 'keys' ? { x: 300, y: 300 } : { x: 300 + Math.cos((ANG[id] * Math.PI) / 180) * 188, y: 300 + Math.sin((ANG[id] * Math.PI) / 180) * 188 };
+// wobbly membrane path
+const pts = Array.from({ length: 48 }, (_, i) => { const a = (i / 48) * Math.PI * 2; const r = 252 + Math.sin(a * 5) * 7 + Math.cos(a * 3) * 6; return [300 + Math.cos(a) * r, 300 + Math.sin(a) * r]; });
+const blob = 'M' + pts.map((p) => p.map((v) => v.toFixed(1)).join(',')).join('L') + 'Z';
+const payload = list.map((o) => ({ id: o.id, name: o.name, latin: o.latin, role: o.role, axis: o.axis, color: COL[o.id], pages: o.pages.map((p) => ({ s: p.slug, t: p.title, c: ATLAS_COLORS[p.category] || '#fff', cl: catLabel(p.category), d: p.backlinks.length })).sort((a, b) => b.d - a.d) }));
+const first = payload.find((o) => o.id === 'keys')!;
+---
+<div class="anat" data-anatomy data-base={base}>
+  <div class="anat-fig">
+    <svg viewBox="0 0 600 600" role="img" aria-label="Anatomy of a digital organism">
+      <defs>
+        <radialGradient id="cellg" cx="50%" cy="45%" r="60%"><stop offset="0" stop-color="#4fd2ff" stop-opacity=".10" /><stop offset="1" stop-color="#ff5d73" stop-opacity=".03" /></radialGradient>
+        <filter id="glow"><feGaussianBlur stdDeviation="6" /></filter>
+      </defs>
+      <g class="membrane"><path d={blob} fill="url(#cellg)" stroke="#b79bff" stroke-opacity=".55" stroke-width="1.5" /><path d={blob} fill="none" stroke="#b79bff" stroke-opacity=".18" stroke-width="10" transform="translate(300 300) scale(1.03) translate(-300 -300)" /></g>
+      <circle cx="300" cy="300" r="86" fill="none" stroke="#ffcf4a" stroke-opacity=".35" stroke-dasharray="3 6" />
+      {list.filter((o) => o.id !== 'keys').map((o) => { const p = pos(o.id); return <line x1="300" y1="300" x2={p.x} y2={p.y} stroke={COL[o.id]} stroke-opacity=".28" stroke-width="1.2" stroke-dasharray="2 4" />; })}
+      {Array.from({ length: 34 }, (_, i) => { const a = i * 2.39996; const r = 40 + ((i * 53) % 210); return <circle cx={300 + Math.cos(a) * r} cy={300 + Math.sin(a) * r} r={1 + (i % 3) * .5} fill="#e6ecff" opacity=".18" />; })}
+      {list.map((o) => { const p = pos(o.id); const r = o.id === 'keys' ? 34 : 24; const below = p.y > 300 || o.id === 'keys'; return (
+        <g class:list={['organ', { on: o.id === 'keys' }]} data-organ={o.id} tabindex="0" role="button" aria-label={o.name}>
+          <circle class="halo" cx={p.x} cy={p.y} r={r + 16} fill={COL[o.id]} opacity=".25" filter="url(#glow)" />
+          <circle class="core" cx={p.x} cy={p.y} r={r} fill={COL[o.id]} />
+          <text class="n" x={p.x} y={p.y + 4} text-anchor="middle">{o.pages.length}</text>
+          <text x={p.x} y={below ? p.y + r + 20 : p.y - r - 22} text-anchor="middle">{o.name}</text>
+          <text class="lat" x={p.x} y={below ? p.y + r + 34 : p.y - r - 9} text-anchor="middle">{o.latin}</text>
+        </g>); })}
+    </svg>
+  </div>
+  <div class="anat-panel">
+    <span class="eyebrow" data-f="axis">Axis · {first.axis}</span>
+    <h3 data-f="name" style={`color:${first.color}`}>{first.name}</h3>
+    <span class="lat" data-f="latin">{first.latin}</span>
+    <p class="role" data-f="role">{first.role}</p>
+    <ul data-f="pages">{first.pages.map((p) => <li><a href={`${base}/wiki/${p.s}`} style={`--c:${p.c}`}><i></i>{p.t}<span>{p.cl}</span></a></li>)}</ul>
+  </div>
+  <script type="application/json" data-organs set:html={JSON.stringify(payload)} />
+</div>
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>('[data-anatomy]')) {
+    const base = root.dataset.base!;
+    const data = JSON.parse(root.querySelector('[data-organs]')!.textContent!);
+    const f = (k: string) => root.querySelector<HTMLElement>(`[data-f="${k}"]`)!;
+    const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]!));
+    const show = (id: string) => {
+      const o = data.find((x: any) => x.id === id); if (!o) return;
+      root.querySelectorAll('.organ').forEach((g) => g.classList.toggle('on', (g as HTMLElement).dataset.organ === id));
+      f('axis').textContent = `Axis · ${o.axis}`; f('name').textContent = o.name; f('name').style.color = o.color; f('latin').textContent = o.latin; f('role').textContent = o.role;
+      f('pages').innerHTML = o.pages.map((p: any) => `<li><a href="${base}/wiki/${p.s}" style="--c:${p.c}"><i></i>${esc(p.t)}<span>${esc(p.cl)}</span></a></li>`).join('');
+    };
+    root.querySelectorAll<HTMLElement>('.organ').forEach((g) => { g.addEventListener('click', () => show(g.dataset.organ!)); g.addEventListener('keydown', (e) => { if (e.key === 'Enter') show(g.dataset.organ!); }); });
+    const fromHash = () => { const h = location.hash.match(/organ-(\w+)/); if (h) show(h[1]); }; fromHash(); window.addEventListener('hashchange', fromHash);
+  }
+</script>

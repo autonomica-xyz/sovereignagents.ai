@@ -1,0 +1,11 @@
+---
+import Layout from '../../../layouts/CatalogLayout.astro';
+import IndexTable from '../../../components/IndexTable.astro';
+import { wiki, categories } from '../../../lib/wiki';
+const B = '/proposal-c';
+const items = wiki().articles.filter((a) => a.kind !== 'meta').sort((a, b) => b.backlinks.length - a.backlinks.length);
+---
+<Layout title="Full index" active="browse">
+  <div class="hd"><div><span class="lab g">Full index · {items.length} entries</span><h1>Everything on file</h1><p>Filter by class, sort by any column. Click a column header to sort.</p></div></div>
+  <IndexTable items={items} base={B} cats={categories()} />
+</Layout>

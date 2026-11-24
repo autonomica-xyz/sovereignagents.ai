@@ -1,0 +1,81 @@
+---
+import Layout from '../../layouts/JournalLayout.astro';
+import { wiki, fmtDate, recentlyUpdated, recentChanges, byCategory, catLabel } from '../../lib/wiki';
+import { LEVELS, specimens } from '../../lib/organism';
+const B = '/proposal-a';
+const { logs, timeline, bySlug, articles } = wiki();
+const lead = logs[0];
+const wire = recentChanges(9);
+const fresh = recentlyUpdated(9).filter((a) => !['timeline', 'glossary', 'people-directory'].includes(a.slug)).slice(0, 6);
+const specs = specimens();
+const openProblems = byCategory('open-problem');
+const kills = byCategory('attack').filter((a) => /20\d\d/.test(a.slug) || a.backlinks.length > 4).slice(0, 5);
+const recentTl = [...timeline].sort((a, b) => b.sortKey - a.sortKey).slice(0, 8);
+const docs = articles.filter((a) => a.kind === 'doc' && a.slug !== 'doc-research-notes').slice(0, 4);
+---
+<Layout home>
+  <section class="lead">
+    <article>
+      <a class="kicker" href={`${B}/feed`}>Latest dispatch · {fmtDate(lead.date)}</a>
+      <h1><a href={`${B}/feed#${lead.slug}`}>{lead.title}</a></h1>
+      <p class="dek">{lead.summary}</p>
+      <ul class="lead-sections">{lead.sections.slice(0, 8).map((s) => <li>{s}</li>)}</ul>
+    </article>
+    <aside class="wire">
+      <h2>The Wire</h2>
+      <ol>
+        {wire.map((c) => (
+          <li>
+            <time datetime={c.date}>{fmtDate(c.date, 'short')} · {c.hash}</time>
+            {c.subject.replace(/^wiki\([^)]*\):\s*/, '')}
+            {c.slugs.length > 0 && <div class="tags">{c.slugs.slice(0, 4).map((s) => <a href={`${B}/wiki/${s}`}>→ {bySlug.get(s)!.title}</a>)}</div>}
+          </li>
+        ))}
+      </ol>
+    </aside>
+  </section>
+
+  <h2 class="rule-title">The Ladder <a href={`${B}/wiki/sovereignty-levels`}>L0 → L5, explained</a></h2>
+  <div class="ladder">
+    {LEVELS.map((l, i) => {
+      const at = specs.filter((s) => s.levelNum === i);
+      return (
+        <div>
+          <span class="lv">{l.id}</span>
+          <h3>{l.name}</h3>
+          <p>{l.who}</p>
+          <div class="who">{at.length ? at.map((s) => <a href={`${B}/wiki/${s.slug}`}>{s.name}</a>) : <span class="none">{i >= 4 ? 'Not yet observed.' : '—'}</span>}</div>
+        </div>
+      );
+    })}
+  </div>
+
+  <h2 class="rule-title">Fresh from the field <a href={`${B}/feed`}>All dispatches →</a></h2>
+  <div class="cards">
+    {fresh.map((a) => (
+      <article class="card">
+        <a class="kicker" href={`${B}/browse/${a.category}`}>{catLabel(a.category)}</a>
+        <h3><a href={`${B}/wiki/${a.slug}`}>{a.title}</a></h3>
+        <p>{a.summary}</p>
+        <span class="meta">Revised {fmtDate(a.updated)} · cited by {a.backlinks.length}</span>
+      </article>
+    ))}
+  </div>
+
+  <div class="split">
+    <section>
+      <h2 class="rule-title">How organisms die <a href={`${B}/browse/attack`}>All kill vectors →</a></h2>
+      <ol class="numbered">{kills.map((a) => <li><a href={`${B}/wiki/${a.slug}`}>{a.title}</a><p>{a.summary.slice(0, 170)}{a.summary.length > 170 ? '…' : ''}</p></li>)}</ol>
+    </section>
+    <section>
+      <h2 class="rule-title">Unsolved <a href={`${B}/wiki/open-questions`}>Open questions →</a></h2>
+      <ol class="numbered">{openProblems.slice(0, 5).map((a) => <li><a href={`${B}/wiki/${a.slug}`}>{a.title.replace(/^Open problem:\s*/i, '')}</a><p>{a.summary.slice(0, 170)}{a.summary.length > 170 ? '…' : ''}</p></li>)}</ol>
+    </section>
+  </div>
+
+  <h2 class="rule-title">Lineage, most recent first <a href={`${B}/wiki/timeline`}>Full timeline →</a></h2>
+  <div class="tl">{recentTl.map((r) => <div><time>{r.when}</time><p>{r.slugs[0] ? <a href={`${B}/wiki/${r.slugs[0]}`}>{r.event}</a> : r.event}</p></div>)}</div>
+
+  <h2 class="rule-title">Long reads <a href={`${B}/browse/longform`}>All →</a></h2>
+  <div class="longreads">{docs.map((d) => <a href={`${B}/wiki/${d.slug}`}><span class="kicker">{d.words.toLocaleString('en')} words</span><h3>{d.title}</h3><p>{d.summary}</p></a>)}</div>
+</Layout>

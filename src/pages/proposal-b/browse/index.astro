@@ -1,0 +1,10 @@
+---
+import Layout from '../../../layouts/AtlasLayout.astro';
+import { categories } from '../../../lib/wiki';
+import { ATLAS_COLORS } from '../../../lib/colors';
+const B = '/proposal-b';
+---
+<Layout title="Regions" active="browse">
+  <div class="page-h"><span class="eyebrow">Regions</span><h1>Territories of the atlas</h1><p>The knowledge base divided by kind of thing: organisms, the building blocks they're made of, the habitats they live in, and what kills them.</p></div>
+  <div class="regions">{categories().map((c) => <a class="region" href={`${B}/browse/${c.id}`} style={`--c:${ATLAS_COLORS[c.id]}`}><b>{c.count}</b><h3>{c.plural}</h3><p>{c.blurb}</p></a>)}</div>
+</Layout>

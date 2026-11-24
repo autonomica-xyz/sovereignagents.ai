@@ -1,0 +1,29 @@
+{
+  "name": "sovereignagents-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "content": "node scripts/sync-content.mjs",
+    "dev": "astro dev",
+    "build": "node scripts/sync-content.mjs && astro build",
+    "build:offline": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@fontsource-variable/fraunces": "^5.3.0",
+    "@fontsource-variable/inter-tight": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@fontsource-variable/source-serif-4": "^5.3.1",
+    "@fontsource-variable/space-grotesk": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "astro": "^7.4.13",
+    "d3-force": "^3.0.1",
+    "gray-matter": "^4.0.3",
+    "marked": "^18.3.0",
+    "mermaid": "^12.3.0",
+    "minisearch": "^7.2.0"
+  },
+  "engines": {
+    "node": ">=22.23.4"
+  }
+}

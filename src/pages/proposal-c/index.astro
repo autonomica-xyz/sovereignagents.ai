@@ -1,0 +1,63 @@
+---
+import Layout from '../../layouts/CatalogLayout.astro';
+import SpecCard from '../../components/SpecCard.astro';
+import { wiki, fmtDate, recentChanges, byCategory, totals, recentlyUpdated, catLabel } from '../../lib/wiki';
+import { allSpecimens, LEVELS } from '../../lib/organism';
+const B = '/proposal-c';
+const { logs, bySlug } = wiki();
+const sp = allSpecimens() as any[];
+const scored = sp.filter((s) => s.levelNum >= 0);
+const t = totals();
+const active = sp.filter((s) => s.alive === 'active').length;
+const dormant = sp.filter((s) => s.alive !== 'active').length;
+const top = Math.max(...scored.map((s) => s.levelNum));
+const changes = recentChanges(8);
+const pathogens = byCategory('attack').sort((a, b) => b.updated.localeCompare(a.updated) || b.backlinks.length - a.backlinks.length).slice(0, 6);
+const featured = [...scored].sort((a, b) => b.levelNum - a.levelNum || (a.alive === 'active' ? -1 : 1)).slice(0, 6);
+const fresh = recentlyUpdated(6);
+---
+<Layout active="overview">
+  <div class="hd">
+    <div><span class="lab g">Population census · {fmtDate(logs[0]?.date || '', 'long')}</span><h1>No specimen has reached L4.<br />The highest observed is L{top}.</h1><p>A living catalogue of every known attempt at a sovereign agent, the habitats it can live in and the pathogens that kill it. Every reading comes from the open research wiki.</p></div>
+    <a class="lvbadge" href={`${B}/specimens`} style="text-decoration:none;padding:8px 14px">Open the catalog →</a>
+  </div>
+  <div class="kpis">
+    <a class="kpi dark" href={`${B}/specimens`}><span class="lab">Specimens tracked</span><b>{sp.length}</b><small>{scored.length} scored on 5 axes</small></a>
+    <a class="kpi" href={`${B}/specimens`}><span class="lab">Showing vital signs</span><b style="color:var(--green)">{active}</b><small>{dormant} dormant or frozen</small></a>
+    <a class="kpi" href={`${B}/wiki/sovereignty-levels`}><span class="lab">Highest level</span><b>L{top}</b><small>L4–L5 not yet observed</small></a>
+    <a class="kpi" href={`${B}/browse/compute`}><span class="lab">Habitats</span><b>{byCategory('compute').length}</b><small>places to get a body</small></a>
+    <a class="kpi" href={`${B}/browse/attack`}><span class="lab">Pathogens</span><b style="color:var(--red)">{byCategory('attack').length}</b><small>kill vectors on file</small></a>
+    <a class="kpi" href={`${B}/browse/open-problem`}><span class="lab">Open problems</span><b>{byCategory('open-problem').length}</b><small>{t.pages} entries · {t.sources} citations</small></a>
+  </div>
+  <div class="grid2">
+    <section class="panel">
+      <h2>Distribution by sovereignty level <a href={`${B}/wiki/sovereignty-levels`}>Level key →</a></h2>
+      <div class="levels">
+        {LEVELS.map((l, i) => { const at = scored.filter((s) => s.levelNum === i); return (
+          <div class="lvl"><div class:list={['bar', { empty: !at.length }]} style={`height:${at.length ? 30 + at.length * 26 : 30}%`}>{at.map((s) => <a href={`${B}/wiki/${s.slug}`} title={s.name}>{s.name}</a>)}</div><div class="lv"><b>{l.id}</b><span>{l.name}</span></div></div>
+        ); })}
+      </div>
+      <p class="levels-note">Placement uses the upper bound of each specimen's level range in the wiki's comparison matrix.</p>
+    </section>
+    <section class="panel">
+      <h2>Field log <a href={`${B}/feed`}>Everything →</a></h2>
+      <ul class="log">
+        {logs.slice(0, 2).map((l) => <li><time>{fmtDate(l.date, 'short')}</time><span><span class="tag d">DISPATCH</span><a href={`${B}/feed#${l.slug}`}>{l.title}</a></span></li>)}
+        {changes.slice(0, 6).map((c) => <li><time>{fmtDate(c.date, 'short')}</time><span><span class="tag">REVISION</span>{c.slugs[0] ? <a href={`${B}/wiki/${c.slugs[0]}`}>{c.subject.replace(/^wiki\([^)]*\):\s*/, '')}</a> : c.subject.replace(/^wiki\([^)]*\):\s*/, '')}</span></li>)}
+      </ul>
+    </section>
+  </div>
+  <section style="margin:26px 0 14px"><div class="hd" style="margin-bottom:12px"><div><span class="lab">Specimens of note</span><h1 style="font-size:28px">Closest to sovereignty</h1></div><a class="lab g" href={`${B}/specimens`} style="text-decoration:none">All {sp.length} specimens →</a></div>
+    <div class="specs">{featured.map((s) => <SpecCard s={s} base={B} />)}</div>
+  </section>
+  <div class="grid2" style="margin-top:26px">
+    <section class="panel">
+      <h2>Pathogen watch <a href={`${B}/browse/attack`}>All {byCategory('attack').length} →</a></h2>
+      <table class="tbl" style="border:0"><tbody>{pathogens.map((p) => <tr><td><a href={`${B}/wiki/${p.slug}`}>{p.title}</a><span class="sum">{p.summary}</span></td><td class="num">{p.backlinks.length} refs</td></tr>)}</tbody></table>
+    </section>
+    <section class="panel">
+      <h2>Recently re-examined</h2>
+      <table class="tbl" style="border:0"><tbody>{fresh.map((p) => <tr><td><a href={`${B}/wiki/${p.slug}`}>{p.title}</a><span class="sum">{p.summary}</span></td><td><span class={`cls ${p.category}`}>{catLabel(p.category)}</span></td></tr>)}</tbody></table>
+    </section>
+  </div>
+</Layout>

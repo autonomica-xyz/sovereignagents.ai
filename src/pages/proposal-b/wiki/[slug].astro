@@ -1,0 +1,44 @@
+---
+import Layout from '../../../layouts/AtlasLayout.astro';
+import { wiki, fmtDate, withBase, catLabel } from '../../../lib/wiki';
+import { organs } from '../../../lib/organism';
+import { ATLAS_COLORS } from '../../../lib/colors';
+export const getStaticPaths = () => wiki().articles.map((a) => ({ params: { slug: a.slug }, props: { a } }));
+const { a } = Astro.props as any;
+const B = '/proposal-b';
+const { bySlug } = wiki();
+const col = ATLAS_COLORS[a.category] || '#4fd2ff';
+const backs = a.backlinks.map((s: string) => bySlug.get(s)!).sort((x: any, y: any) => y.backlinks.length - x.backlinks.length);
+const outs = a.links.map((s: string) => bySlug.get(s)!);
+const myOrgans = organs().filter((o) => o.pages.some((p) => p.slug === a.slug));
+---
+<Layout title={a.title} description={a.summary}>
+  <div class="art" style={`--c:${col}`}>
+    <article>
+      <header class="art-h">
+        <a class="chip" href={`${B}/browse/${a.category}`} style={`--c:${col}`}><i></i>{catLabel(a.category)}</a>
+        <h1>{a.title}</h1>
+        {a.summary && <p class="sum">{a.summary}</p>}
+        <div class="metas">
+          {a.updated && <span class="chip">updated {fmtDate(a.updated, 'short')}</span>}
+          <span class="chip">{a.links.length} out · {a.backlinks.length} in</span>
+          {a.sourceCount > 0 && <span class="chip">{a.sourceCount} sources</span>}
+          {a.status && <span class="chip">{a.status}</span>}
+        </div>
+      </header>
+      <div class="prose" set:html={withBase(a.html, B)} />
+    </article>
+    <aside class="side">
+      {(a.links.length + a.backlinks.length) > 0 && <div class="box"><h4><span>Local map</span><span>{a.links.length + a.backlinks.length} neighbours</span></h4><div class="ego" data-ego={a.slug}><canvas></canvas></div></div>}
+      {myOrgans.length > 0 && <div class="box"><h4>Organ</h4><div class="organs-of">{myOrgans.map((o) => <a class="chip" href={`${B}/anatomy#organ-${o.id}`}>{o.name} · {o.axis}</a>)}</div></div>}
+      {backs.length > 0 && <div class="box"><h4><span>Inbound · backlinks</span><span>{backs.length}</span></h4><ul class="linklist">{backs.map((b: any) => <li><a href={`${B}/wiki/${b.slug}`} style={`--c:${ATLAS_COLORS[b.category]}`}><i></i>{b.title}</a></li>)}</ul></div>}
+      {outs.length > 0 && <div class="box"><h4><span>Outbound</span><span>{outs.length}</span></h4><ul class="linklist">{outs.map((b: any) => <li><a href={`${B}/wiki/${b.slug}`} style={`--c:${ATLAS_COLORS[b.category]}`}><i></i>{b.title}</a></li>)}</ul></div>}
+    </aside>
+  </div>
+</Layout>
+<script>
+  import { mountGraph } from '../../../scripts/graph-canvas';
+  import { ATLAS_COLORS } from '../../../lib/colors';
+  const el = document.querySelector<HTMLElement>('[data-ego]');
+  if (el) fetch('/graph.json').then((r) => r.json()).then((data) => mountGraph(el.querySelector('canvas')!, data, { colors: ATLAS_COLORS, focus: el.dataset.ego, ego: true, padding: 70, onSelect: (n) => { if (n && n.id !== el.dataset.ego) location.href = `/proposal-b/wiki/${n.id}`; } }));
+</script>

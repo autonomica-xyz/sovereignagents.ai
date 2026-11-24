@@ -1,0 +1,23 @@
+---
+import Layout from '../../layouts/JournalLayout.astro';
+import { wiki, fmtDate, withBase } from '../../lib/wiki';
+const B = '/proposal-a';
+const { logs } = wiki();
+---
+<Layout title="Dispatches" active="feed">
+  <div class="page-title"><span class="kicker">Dispatches</span><h1>From the research desk</h1><p>Every research pass leaves a dated dispatch: what was found, what changed in the wiki, and what could not be verified.</p></div>
+  {logs.map((l, i) => (
+    <article class="dispatch" id={l.slug}>
+      <div class="date"><b>{new Date(l.date + 'T12:00:00Z').getUTCDate()}</b><span>{fmtDate(l.date).replace(/^\d+\s/, '')}</span></div>
+      <div>
+        <h2>{l.title}</h2>
+        {i < 2 ? <div class="prose" set:html={withBase(l.html, B)} /> : (
+          <>
+            <p style="font-size:18px;color:var(--ink2)">{l.summary}</p>
+            <details><summary>Read the full dispatch ({l.sections.length} sections)</summary><div class="prose" set:html={withBase(l.html, B)} /></details>
+          </>
+        )}
+      </div>
+    </article>
+  ))}
+</Layout>

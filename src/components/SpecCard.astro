@@ -1,0 +1,21 @@
+---
+import Vitals from './Vitals.astro';
+interface Props { s: any; base: string }
+const { s, base } = Astro.props;
+---
+<a class="spec" href={`${base}/wiki/${s.slug}`} data-alive={s.alive} data-level={s.levelNum}>
+  <div class="spec-top"><span class="lab">{s.code}{s.year ? ` · ${s.year}` : ''}</span><span class={`lvbadge ${s.levelNum >= 0 ? 'l' + s.levelNum : 'none'}`}>{s.level === '—' ? 'unscored' : s.level}</span></div>
+  <h3>{s.name}</h3>
+  <span class={`status ${s.alive}`}><i></i>{s.status}</span>
+  <div class="spec-body">
+    <Vitals readings={s.readings} alive={s.alive} size={110} ecg={false} uid={s.slug} />
+    <dl class="facts">
+      <dt>Keys</dt><dd>{s.keys}</dd>
+      <dt>Rent</dt><dd>{s.paysCompute}</dd>
+      <dt>Repro</dt><dd>{s.replicates}</dd>
+      <dt>Host</dt><dd>{s.host}</dd>
+    </dl>
+  </div>
+  <Vitals alive={s.alive} uid={s.slug + '-e'} />
+  {s.article && <p class="sum">{s.article.summary}</p>}
+</a>

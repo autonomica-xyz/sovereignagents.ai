@@ -1,0 +1,39 @@
+---
+import Layout from '../../../layouts/JournalLayout.astro';
+import { wiki, fmtDate, withBase, catLabel } from '../../../lib/wiki';
+export const getStaticPaths = () => wiki().articles.map((a) => ({ params: { slug: a.slug }, props: { a } }));
+const { a } = Astro.props as any;
+const B = '/proposal-a';
+const { bySlug } = wiki();
+const toc = a.headings.filter((h: any) => h.depth <= 3 && h.depth >= 2);
+const backs = a.backlinks.map((s: string) => bySlug.get(s)!).sort((x: any, y: any) => y.backlinks.length - x.backlinks.length);
+const outs = a.links.map((s: string) => bySlug.get(s)!).slice(0, 14);
+---
+<Layout title={a.title} description={a.summary}>
+  <header class="art-head">
+    <a class="kicker" href={`${B}/browse/${a.category}`}>{catLabel(a.category)}</a>
+    <h1>{a.title}</h1>
+    {a.summary && <p class="dek">{a.summary}</p>}
+    <p class="meta">
+      {a.updated && <span>Revised {fmtDate(a.updated)}</span>}
+      <span>{a.words.toLocaleString('en')} words</span>
+      {a.sourceCount > 0 && <span>{a.sourceCount} sources</span>}
+      <span>cited by {a.backlinks.length}</span>
+    </p>
+  </header>
+  <div class="art-grid">
+    <nav class="toc">{toc.length > 1 && <><h4>In this entry</h4>{toc.map((h: any) => <a class={`d${h.depth}`} href={`#${h.id}`}>{h.text}</a>)}</>}</nav>
+    <article class="prose" set:html={withBase(a.html, B)} />
+    <aside class="aside">
+      {outs.length > 0 && <><h4>This entry cites</h4><ul class="cites">{outs.map((o: any) => <li><a href={`${B}/wiki/${o.slug}`}>{o.title}</a><span>{catLabel(o.category)}</span></li>)}</ul></>}
+      <h4>Source</h4><p class="meta"><a href={`https://github.com/autonomica-xyz/sovereign-agents-research/blob/main/${a.path}`}>{a.path}</a></p>
+    </aside>
+  </div>
+  {backs.length > 0 && (
+    <section class="backlinks">
+      <h2 class="rule-title" style="margin-top:10px">Cited by {backs.length} {backs.length === 1 ? 'entry' : 'entries'}</h2>
+      <div class="cards">{backs.slice(0, 12).map((b: any) => <article class="card"><span class="kicker">{catLabel(b.category)}</span><h3><a href={`${B}/wiki/${b.slug}`}>{b.title}</a></h3><p>{b.summary}</p></article>)}</div>
+      {backs.length > 12 && <p class="meta">Also cited by: {backs.slice(12).map((b: any, i: number) => <>{i > 0 && ', '}<a href={`${B}/wiki/${b.slug}`}>{b.title}</a></>)}</p>}
+    </section>
+  )}
+</Layout>

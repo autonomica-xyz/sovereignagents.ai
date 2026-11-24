@@ -1,0 +1,23 @@
+---
+// Pentagon radar of the five axes plus an ECG trace whose rhythm reflects the specimen's status.
+import { AXES } from '../lib/organism';
+interface Props { readings?: Record<string, number>; alive?: string; size?: number; ecg?: boolean; uid: string }
+const { readings, alive = 'active', size = 120, ecg = true, uid } = Astro.props;
+const c = size / 2, R = size / 2 - (size > 150 ? 26 : 18);
+const pt = (i: number, v: number) => { const a = -Math.PI / 2 + (i * 2 * Math.PI) / 5; return [c + Math.cos(a) * R * v, c + Math.sin(a) * R * v]; };
+const ring = (v: number) => AXES.map((_, i) => pt(i, v).map((n) => n.toFixed(1)).join(',')).join(' ');
+const poly = readings ? AXES.map((ax, i) => pt(i, 0.12 + (readings[ax] / 2) * 0.88).map((n) => n.toFixed(1)).join(',')).join(' ') : '';
+const beat = alive === 'active' ? 'M0,20 L30,20 L36,20 L40,6 L45,34 L50,14 L54,20 L90,20 L96,20 L100,6 L105,34 L110,14 L114,20 L150,20 L156,20 L160,6 L165,34 L170,14 L174,20 L240,20'
+  : alive === 'dormant' ? 'M0,20 L70,20 L74,16 L78,24 L82,20 L170,20 L174,17 L178,23 L182,20 L240,20' : 'M0,20 L240,20';
+---
+<div class="vitals" data-alive={alive}>
+  {readings && (
+    <svg class="radar" style="overflow:visible" viewBox={`0 0 ${size} ${size}`} width={size} height={size} aria-label="Axis readings">
+      {[0.33, 0.66, 1].map((v) => <polygon points={ring(v)} fill="none" class="grid" />)}
+      {AXES.map((_, i) => { const [x, y] = pt(i, 1); return <line x1={c} y1={c} x2={x} y2={y} class="grid" />; })}
+      <polygon points={poly} class="shape" />
+      {AXES.map((ax, i) => { const [x, y] = pt(i, size > 150 ? 1.2 : 1.26); return <text x={x} y={y + 3} text-anchor="middle">{ax.slice(0, 4)}</text>; })}
+    </svg>
+  )}
+  {ecg && <svg class="ecg" viewBox="0 0 240 40" preserveAspectRatio="none" aria-hidden="true"><path d={beat} id={`ecg-${uid}`} /></svg>}
+</div>

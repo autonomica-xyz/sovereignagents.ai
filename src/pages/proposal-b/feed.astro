@@ -1,0 +1,34 @@
+---
+import Layout from '../../layouts/AtlasLayout.astro';
+import { wiki, fmtDate, recentChanges, withBase } from '../../lib/wiki';
+import { ATLAS_COLORS } from '../../lib/colors';
+const B = '/proposal-b';
+const { logs, timeline, bySlug } = wiki();
+const changes = recentChanges(60);
+type Ev = { kind: 'log' | 'commit'; date: string; data: any };
+const evs: Ev[] = [...logs.map((l) => ({ kind: 'log' as const, date: l.date + 'T23:59:00Z', data: l })), ...changes.map((c) => ({ kind: 'commit' as const, date: c.date, data: c }))].sort((a, b) => b.date.localeCompare(a.date));
+const deep = [...timeline].sort((a, b) => b.sortKey - a.sortKey);
+---
+<Layout title="Signals" active="feed">
+  <div class="page-h"><span class="eyebrow">Signals</span><h1>What moved in the graph</h1><p>Research dispatches (rose) and every change to the knowledge base (cyan), newest first, straight from the wiki's history.</p></div>
+  <div class="stream">
+    {evs.map((e) => e.kind === 'log' ? (
+      <div class="ev log" id={e.data.slug}><div class="card">
+        <time>{fmtDate(e.data.date)} · research dispatch</time>
+        <h3>{e.data.title}</h3>
+        <p>{e.data.summary}</p>
+        <details><summary>Open dispatch</summary><div class="prose" set:html={withBase(e.data.html, B)} /></details>
+      </div></div>
+    ) : (
+      <div class="ev"><div class="card">
+        <time>{fmtDate(e.data.date, 'short')} · {e.data.hash}</time>
+        <h3>{e.data.subject.replace(/^wiki\([^)]*\):\s*/, '')}</h3>
+        {e.data.slugs.length > 0 && <div class="chips">{e.data.slugs.slice(0, 10).map((s: string) => <a class="chip" href={`${B}/wiki/${s}`} style={`--c:${ATLAS_COLORS[bySlug.get(s)!.category]}`}><i></i>{bySlug.get(s)!.title.slice(0, 30)}</a>)}{e.data.slugs.length > 10 && <span class="chip">+{e.data.slugs.length - 10}</span>}</div>}
+      </div></div>
+    ))}
+  </div>
+  <section class="sect">
+    <div class="sect-head"><div><span class="eyebrow">Deep time</span><h2>Lineage, 1940s → now</h2></div><a class="btn ghost" href={`${B}/wiki/timeline`}>Timeline entry →</a></div>
+    <div class="deep">{deep.map((r) => <a href={r.slugs[0] ? `${B}/wiki/${r.slugs[0]}` : `${B}/wiki/timeline`}><b>{r.when}</b>{r.event}</a>)}</div>
+  </section>
+</Layout>

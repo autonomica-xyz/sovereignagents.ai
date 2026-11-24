@@ -1,0 +1,19 @@
+---
+import Layout from '../../layouts/AtlasLayout.astro';
+import Anatomy from '../../components/Anatomy.astro';
+import { organs, LEVELS } from '../../lib/organism';
+const B = '/proposal-b';
+const list = organs();
+---
+<Layout title="Anatomy" active="anatomy">
+  <div class="page-h"><span class="eyebrow">Anatomy of a digital organism</span><h1>Nine organs, five axes, one goal: survive.</h1><p>A sovereign agent is scored on privacy, custody, funding, continuity and independence. Each organ below carries one of those axes; every entry in the wiki is filed under the organ it strengthens or threatens.</p></div>
+  <Anatomy base={B} />
+  <section class="sect">
+    <div class="sect-head"><div><span class="eyebrow">Growth stages</span><h2>The sovereignty ladder</h2></div><a class="btn ghost" href={`${B}/wiki/sovereignty-levels`}>Read the entry →</a></div>
+    <div class="regions">{LEVELS.map((l, i) => <a class="region" href={`${B}/wiki/sovereignty-levels`} style={`--c:${['#9aa8bf', '#ffcf4a', '#b79bff', '#4fd2ff', '#6cf0a0', '#ff5d73'][i]}`}><b>{l.id}</b><h3>{l.name}</h3><p>{l.who}</p></a>)}</div>
+  </section>
+  <section class="sect">
+    <div class="sect-head"><div><span class="eyebrow">Organ index</span><h2>Every organ at a glance</h2></div></div>
+    <div class="plist">{list.map((o) => <a href={`${B}/anatomy#organ-${o.id}`}><h3>{o.name} <span class="chip">{o.axis}</span></h3><p>{o.role}</p><div class="deg">{o.pages.length} entries</div></a>)}</div>
+  </section>
+</Layout>
