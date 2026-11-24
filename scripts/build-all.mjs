@@ -1,15 +1,19 @@
-// Builds the three theme variants into OUT_DIR/{a,c,d} and writes the chooser at OUT_DIR/.
+// Builds organism mode into OUT_DIR/ and nerd mode into OUT_DIR/nerd/.
 // Usage: OUT_DIR=dist node scripts/build-all.mjs
 import { execFileSync } from 'node:child_process';
-import { cpSync, mkdirSync, rmSync, existsSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { renameSync, mkdtempSync, rmSync, existsSync } from 'node:fs';
+import { dirname, join, resolve } from 'node:path';
 const out = resolve(process.env.OUT_DIR || 'dist');
+// Astro moves files into outDir with rename(), so the scratch dir must sit on the same filesystem.
+const tmp = mkdtempSync(join(dirname(out), '.sa-nerd-'));
 rmSync(out, { recursive: true, force: true });
-mkdirSync(out, { recursive: true });
-for (const theme of ['a', 'c', 'd']) {
-  execFileSync('npx', ['astro', 'build', '--silent'], { stdio: 'inherit', env: { ...process.env, THEME: theme, OUT_DIR: join(out, theme) } });
-  console.log(`[build-all] built /${theme}/`);
+const build = (MODE, dir) => execFileSync('npx', ['astro', 'build', '--silent'], { stdio: 'inherit', env: { ...process.env, MODE, OUT_DIR: dir } });
+try {
+  build('organism', out);
+  build('nerd', join(tmp, 'nerd'));
+  if (existsSync(join(out, 'nerd'))) throw new Error('organism build already has a /nerd/ route');
+  renameSync(join(tmp, 'nerd'), join(out, 'nerd'));
+} finally {
+  rmSync(tmp, { recursive: true, force: true });
 }
-cpSync('chooser', out, { recursive: true });
-if (!existsSync(join(out, 'index.html'))) throw new Error('chooser/index.html missing');
-console.log(`[build-all] chooser written; output in ${out}`);
+console.log(`[build-all] organism at /, nerd at /nerd/; output in ${out}`);

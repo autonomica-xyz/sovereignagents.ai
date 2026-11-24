@@ -8,17 +8,16 @@ A reference on sovereign agents: software that holds its own keys, pays for its 
 
 Organs link to technologies, technologies to the tracked systems and builders using them, and developments to all three.
 
-## Visual directions
+## Modes
 
-The same content and routes are built three times, once per visual direction, with a chooser at `/`:
+The site has two modes over the same content and routes:
 
-| Prefix | Theme | Signature |
-|---|---|---|
-| `/a/` | Instrument: dark, technical | A glowing sovereignty staircase with every tracked system on its step; five-axis radars |
-| `/c/` | Terminal: phosphor on black | Boot log, a clickable ASCII organism, `tail -f` of developments, grep-style search |
-| `/d/` | Organism: bioluminescent field guide | The agent drawn as an SVG cell with nine organelles; specimen plates generated from scores |
+- **Organism** (default, at `/`): a bioluminescent field guide. The agent is drawn as an SVG cell whose nine organelles are the organs; each tracked system is a specimen plate generated from its scores.
+- **Nerd** (at `/nerd/`): a terminal. Boot log, a clickable ASCII organism, `tail -f` of developments and grep-style search.
 
-Pages in `src/pages/` and components in `src/components/` are shared. Each theme lives in `src/themes/<id>/` and supplies `config.ts`, `Shell.astro` (header and footer), `Home.astro`, four figure components (`AnatomyFigure`, `OrganFigure`, `TrackerFigure`, `SpecimenFigure`) and `theme.css`, which sets the design tokens used by `src/styles/structure.css`. The build resolves `@theme` to the chosen theme and prefixes internal links with its base path. The chooser is plain HTML in `chooser/`.
+The `organism / nerd` switch in the header (or Shift+N) opens the same page in the other mode and remembers the choice in `localStorage`. An inline script in `<head>` applies a remembered choice before the page paints. Old preview paths redirect: `/a/*` and `/d/*` to `/*`, `/c/*` to `/nerd/*`.
+
+Pages in `src/pages/` and components in `src/components/` are shared. Each mode lives in `src/themes/<mode>/` and supplies `config.ts`, `Shell.astro` (header and footer), `Home.astro`, four figure components (`AnatomyFigure`, `OrganFigure`, `TrackerFigure`, `SpecimenFigure`) and `theme.css`, which sets the design tokens used by `src/styles/structure.css`. The build resolves `@theme` to the chosen mode; nerd pages get their internal links prefixed with `/nerd`.
 
 ## Content
 
@@ -49,8 +48,9 @@ Requires Node 22.23.4 or later.
 
 ```sh
 npm ci
-THEME=d npm run dev   # one theme (a, c or d) at http://localhost:4321/d/
-npm run build         # all three themes and the chooser into dist/
+npm run dev             # organism mode at http://localhost:4321/
+MODE=nerd npm run dev   # nerd mode at http://localhost:4321/nerd/
+npm run build           # both modes into dist/ (nerd in dist/nerd/)
 npm run check         # every internal link and #anchor in dist/
 ```
 

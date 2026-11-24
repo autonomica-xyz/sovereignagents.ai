@@ -18,9 +18,16 @@ server {
   listen 8000 default_server;
   root $APP/current;
   index index.html;
+  absolute_redirect off;
   gzip on; gzip_types text/css application/javascript application/json image/svg+xml; gzip_min_length 1024;
-  location ~ ^/[acd]/_astro/ { expires 30d; add_header Cache-Control "public, immutable"; }
-  location ~ ^/(?<edition>[acd])/ { try_files \$uri \$uri/index.html \$uri/ =404; add_header Cache-Control "public, max-age=300"; error_page 404 /\$edition/404.html; }
+  # v3 preview paths: /a/ and /d/ were the earlier directions, /c/ is now nerd mode.
+  location ~ ^/[ad](/.*)\$ { return 301 \$1\$is_args\$args; }
+  location ~ ^/[ad]\$ { return 301 /; }
+  location ~ ^/c(/.*)\$ { return 301 /nerd\$1\$is_args\$args; }
+  location = /c { return 301 /nerd/; }
+  location ^~ /_astro/ { expires 30d; add_header Cache-Control "public, immutable"; }
+  location ^~ /nerd/_astro/ { expires 30d; add_header Cache-Control "public, immutable"; }
+  location ^~ /nerd/ { try_files \$uri \$uri/index.html \$uri/ =404; add_header Cache-Control "public, max-age=300"; error_page 404 /nerd/404.html; }
   location / { try_files \$uri \$uri/index.html \$uri/ =404; add_header Cache-Control "public, max-age=300"; }
   error_page 404 /404.html;
 }

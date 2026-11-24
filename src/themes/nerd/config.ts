@@ -1,5 +1,5 @@
 export const theme = {
-  id: 'c',
+  id: 'nerd',
   name: 'Terminal',
   color: '#0a0c09',
   searchPlaceholder: 'grep -ri "…" organs technologies tracker developments',

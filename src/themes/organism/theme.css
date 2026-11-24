@@ -100,7 +100,7 @@ a{color:var(--link);text-decoration-color:rgba(138,245,216,.35)}
 .foot-brand{font-size:1.2rem;font-weight:400}
 .foot-links a{color:var(--fg2)}
 .theme-switch{margin-top:1rem!important;color:var(--muted);font-size:.85rem}
-.theme-switch a[aria-current]{color:var(--accent);text-decoration:none}
+
 /* ---------- organism figure ---------- */
 .organism{width:100%;height:auto;display:block;overflow:visible}
 .organism a{cursor:pointer}
@@ -250,4 +250,27 @@ a{color:var(--link);text-decoration-color:rgba(138,245,216,.35)}
   .d-notes-list li{grid-template-columns:1fr;gap:.2rem}
   .d-spec{grid-template-columns:1fr;padding:1rem}
   .d-spec .plate-svg{max-width:260px;margin:0 auto}
+}
+
+/* mode toggle: organism / nerd */
+.mode-toggle{display:inline-flex;align-items:center;gap:.45rem;font:500 .8rem/1 var(--font-ui);color:var(--muted);text-decoration:none;padding:.42rem .75rem;border:1px solid var(--line2);border-radius:99px;background:rgba(94,242,194,.04);white-space:nowrap;transition:border-color .2s,color .2s}
+.mode-toggle:hover{border-color:var(--accent);color:var(--fg2)}
+.mode-toggle:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mode-toggle .mt-opt.on{color:var(--fg)}
+.mode-toggle .mt-track{position:relative;width:28px;height:16px;border-radius:99px;background:rgba(94,242,194,.14);box-shadow:inset 0 0 0 1px rgba(94,242,194,.25)}
+.mode-toggle .mt-knob{position:absolute;top:3px;left:3px;width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);transition:transform .25s}
+.mode-toggle:hover .mt-knob{transform:translateX(3px)}
+.mast-in .mode-toggle{margin-left:auto}
+.mast-in .nav{margin-left:auto}
+.mast-in .nav + .mode-toggle{margin-left:1.4rem}
+.theme-switch .mode-toggle{margin-left:.4rem;vertical-align:middle}
+@media (max-width:640px){
+  .brand{font-size:1rem;gap:.5rem}
+  .brand-cell{width:26px;height:26px}
+  .mast-in .nav + .mode-toggle{margin-left:auto}
+  .mast-in .search-btn{margin-left:0;padding:.4rem .55rem}
+  .mast-in{gap:.45rem}
+  .mode-toggle{font-size:.74rem;gap:.32rem;padding:.38rem .55rem}
+  .mode-toggle .mt-track{width:24px;height:14px}
+  .mode-toggle .mt-knob{width:8px;height:8px}
 }

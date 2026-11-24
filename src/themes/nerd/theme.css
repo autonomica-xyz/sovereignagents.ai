@@ -155,8 +155,8 @@ pre{font-family:var(--font-mono);margin:0;white-space:pre;line-height:1.35}
 .tfoot-ls a{color:#7fb3ff;text-decoration:none}
 .tfoot-ls a:hover{background:#7fb3ff;color:var(--bg)}
 .tfoot-theme{margin:1rem 0 0}
-.tfoot-theme a{margin-right:.6rem}
-.tfoot-theme a[aria-current]{color:var(--accent);text-decoration:none}
+
+
 .tstatus{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;padding:.15rem 1rem;background:var(--accent);color:var(--bg);font-size:.78rem;text-shadow:none}
 .tstatus .dim{color:rgba(10,12,9,.6)}
 /* search */
@@ -252,3 +252,17 @@ pre{font-family:var(--font-mono);margin:0;white-space:pre;line-height:1.35}
 
 @media (max-width:640px){.hist-note{display:none}}
 @media (max-width:640px){.tstatus .ts-r{display:none}}
+
+/* mode toggle: organism / nerd */
+.mode-toggle{display:inline-flex;align-items:center;gap:.4rem;color:var(--muted);text-decoration:none;font:inherit;white-space:nowrap}
+.mode-toggle:hover{color:var(--fg2)}
+.mode-toggle .mt-opt.on{color:var(--bg);background:var(--accent);padding:0 .3rem;text-shadow:none}
+.mode-toggle .mt-track{position:relative;width:26px;height:12px;border:1px solid var(--line2)}
+.mode-toggle .mt-knob{position:absolute;top:1px;right:1px;width:10px;height:8px;background:var(--accent);box-shadow:0 0 6px var(--accent)}
+.mode-toggle:hover .mt-knob{right:13px}
+.mode-toggle .mt-knob{transition:right .15s steps(2)}
+.tbar-mode{margin-left:auto;border-left:1px solid var(--line2);padding:0 .9rem}
+.tbar-mode:hover{background:rgba(125,255,138,.08)}
+.tbar-search{margin-left:0}
+.tfoot-theme .mode-toggle{margin-left:.6rem}
+@media (max-width:640px){.tbar-mode{padding:0 .6rem;font-size:.78rem}}

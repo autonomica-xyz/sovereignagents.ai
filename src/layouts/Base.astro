@@ -10,12 +10,25 @@ interface Crumb { href?: string; label: string }
 interface Props { title: string; description?: string; section?: 'blueprint' | 'ecosystem' | 'technology' | 'about' | 'home'; crumbs?: Crumb[]; wide?: boolean }
 const { title, description = 'A reference on how autonomous AI agents survive without an owner: the blueprint, the ecosystem and the technology.', section, crumbs = [] } = Astro.props;
 const full = title === 'Sovereign Agents' ? title : `${title} · Sovereign Agents`;
-const canonical = new URL(Astro.url.pathname, Astro.site);
+// Both modes render the same content; the organism page is canonical.
+const canonical = new URL(Astro.url.pathname.replace(/^\/nerd(?=\/|$)/, '') || '/', Astro.site);
 ---
 <!doctype html>
 <html lang="en" data-theme={theme.id}>
 <head>
   <meta charset="utf-8" />
+  <script is:inline>
+    // Apply the remembered mode before anything paints: organism pages live at /, nerd pages at /nerd/.
+    (function () {
+      try {
+        var m = localStorage.getItem('sa-mode'), p = location.pathname;
+        var nerd = p === '/nerd' || p.indexOf('/nerd/') === 0, to = null;
+        if (m === 'nerd' && !nerd) to = '/nerd' + p;
+        else if (m === 'organism' && nerd) to = p.slice(5) || '/';
+        if (to) { document.documentElement.style.visibility = 'hidden'; location.replace(to + location.search + location.hash); }
+      } catch (e) {}
+    })();
+  </script>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>{full}</title>
   <meta name="description" content={description} />

@@ -1,5 +1,5 @@
 export const theme = {
-  id: 'd',
+  id: 'organism',
   name: 'Organism',
   color: '#03110f',
   searchPlaceholder: 'Search the field guide: organs, specimens, technologies…',
