@@ -6,9 +6,9 @@ import { dirname, join, resolve } from 'node:path';
 const out = resolve(process.env.OUT_DIR || 'dist');
 // Astro moves files into outDir with rename(), so the scratch dir must sit on the same filesystem.
 const tmp = mkdtempSync(join(dirname(out), '.sa-nerd-'));
-rmSync(out, { recursive: true, force: true });
 const build = (MODE, dir) => execFileSync('npx', ['astro', 'build', '--silent'], { stdio: 'inherit', env: { ...process.env, MODE, OUT_DIR: dir } });
 try {
+  rmSync(out, { recursive: true, force: true });
   build('organism', out);
   build('nerd', join(tmp, 'nerd'));
   if (existsSync(join(out, 'nerd'))) throw new Error('organism build already has a /nerd/ route');

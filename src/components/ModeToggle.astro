@@ -16,7 +16,8 @@ const target = nerd ? rel : `/nerd${rel}`;
   const KEY = 'sa-mode';
   const go = (a: HTMLAnchorElement) => {
     try { localStorage.setItem(KEY, a.dataset.modeTo!); } catch {}
-    location.href = a.href + location.hash;
+    const to = new URL(a.href); to.search = location.search; to.hash = location.hash;
+    location.href = to.href;
   };
   document.querySelectorAll<HTMLAnchorElement>('a.mode-toggle').forEach((a) => a.addEventListener('click', (e) => {
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
@@ -24,7 +25,8 @@ const target = nerd ? rel : `/nerd${rel}`;
   }));
   window.addEventListener('keydown', (e) => {
     if (e.key !== 'N' || !e.shiftKey || e.metaKey || e.ctrlKey || e.altKey) return;
-    if (/INPUT|TEXTAREA|SELECT/.test((e.target as HTMLElement).tagName)) return;
+    const el = e.target as HTMLElement;
+    if (/INPUT|TEXTAREA|SELECT/.test(el.tagName) || el.isContentEditable || document.querySelector('[data-search].open')) return;
     const a = document.querySelector<HTMLAnchorElement>('a.mode-toggle'); if (a) go(a);
   });
 </script>
