@@ -1,0 +1,10 @@
+---
+import { MATURITY, MATURITY_LABEL } from '../lib/site';
+interface Props { value: string; compact?: boolean }
+const { value, compact = false } = Astro.props;
+const i = MATURITY.indexOf(value as any);
+---
+<span class:list={['mat', compact && 'mat-compact']} title={`Maturity: ${MATURITY_LABEL[value]}`}>
+  <span class="mat-bar" aria-hidden="true">{MATURITY.map((_, k) => <i class:list={[k <= i && 'on']}></i>)}</span>
+  <span class="mat-l">{MATURITY_LABEL[value]}</span>
+</span>

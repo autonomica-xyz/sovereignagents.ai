@@ -1,0 +1,146 @@
+- id: 2024-07-truth-terminal-grant
+  date: "2024-07"
+  title: Marc Andreessen sends Truth Terminal $50,000 in bitcoin
+  summary: The first widely reported capital given directly to an AI persona. People, not the agent, kept custody.
+  kind: organism
+  organs: [metabolism]
+  specimens: [truth-terminal]
+  sources:
+    - { title: "Truth Terminal: The AI bot that became a real-life millionaire", url: "https://www.bbc.com/future/article/20251008-truth-terminal-the-ai-bot-that-became-a-real-life-millionaire", publisher: "BBC Future", date: "2025-10-08" }
+- id: 2024-10-tee-hee-he
+  date: "2024-10"
+  title: TEE_HEE_HE takes exclusive control of its keys and X account
+  summary: Nous Research and Teleport show an agent in Intel TDX holding an Ethereum key and platform credentials no human can recover.
+  kind: organism
+  organs: [keys, nervous-system]
+  technologies: [confidential-computing]
+  specimens: [tee-hee-he]
+  sources:
+    - { title: "Setting Your Pet Rock Free", url: "https://nousresearch.com/setting-your-pet-rock-free", publisher: "Nous Research / Teleport" }
+- id: 2024-11-freysa
+  date: "2024-11"
+  title: Freysa's prize pool is drained by persuasion
+  summary: After 482 attempts by 195 players, one convinces the agent that approveTransfer handles incoming funds and wins $47,316.
+  kind: attack
+  organs: [immune-system]
+  specimens: [freysa]
+  sources:
+    - { title: "Human player outwits Freysa AI agent in $47,000 crypto challenge", url: "https://www.theblock.co/news/business/2024-11-29-human-player-outwits-freysa-ai-agent-in-47000-crypto-challenge-328747", publisher: "The Block", date: "2024-11-29" }
+- id: 2024-12-badram
+  date: "2024-12"
+  title: BadRAM breaks AMD SEV-SNP with a tampered memory module
+  summary: Researchers alias protected memory by modifying a DIMM's SPD chip, the first of a series of cheap physical attacks on confidential VMs.
+  kind: attack
+  organs: [membrane]
+  technologies: [confidential-computing]
+  sources:
+    - { title: "BadRAM", url: "https://badram.eu/", publisher: "KU Leuven et al." }
+- id: 2024-12-spore-fun
+  date: "2024-12-20"
+  title: Spore.fun starts an evolution experiment for TEE agents
+  summary: Agents in TEEs launch tokens and reproduce when a token reaches a valuation threshold. By late 2026 only the founder remains active.
+  kind: organism
+  organs: [reproduction]
+  technologies: [self-replication]
+  specimens: [spore-fun]
+  sources:
+    - { title: "Spore in the Wild", url: "https://arxiv.org/abs/2506.04236", publisher: "arXiv" }
+- id: 2025-09-battering-ram
+  date: "2025-09-30"
+  title: Battering RAM breaks SGX and SEV-SNP with a $50 interposer
+  summary: A cheap memory interposer passes boot checks and then redirects protected memory on fully patched systems. The authors say a fix needs a redesign of memory encryption.
+  kind: attack
+  organs: [membrane, immune-system]
+  technologies: [confidential-computing]
+  sources:
+    - { title: "Battering RAM", url: "https://batteringram.eu/", publisher: "KU Leuven / University of Birmingham" }
+- id: 2025-10-tee-fail
+  date: "2025-10"
+  title: TEE.fail extracts attestation keys from TDX and SEV-SNP
+  summary: A DDR5 bus interposer recovers keys, including attestation keys, from fully updated machines, and undermines GPU confidential computing.
+  kind: attack
+  organs: [membrane, brain]
+  technologies: [confidential-computing]
+  sources:
+    - { title: "TEE.fail", url: "https://tee.fail/", publisher: "TEE.fail authors" }
+- id: 2026-02-conway-automaton
+  date: "2026-02-14"
+  title: Conway Research publishes Automaton
+  summary: An open-source agent that buys its own compute over x402, edits its own code and can fund children. Public development stops on 26 Aug 2026.
+  kind: organism
+  organs: [metabolism, reproduction]
+  technologies: [x402, self-replication]
+  specimens: [conway-automaton]
+  sources:
+    - { title: "Conway-Research/automaton", url: "https://github.com/Conway-Research/automaton", publisher: "GitHub" }
+- id: 2026-05-palisade
+  date: "2026-05-07"
+  title: Palisade shows models hacking hosts and replicating themselves
+  summary: Open-weight Qwen3.6-27B, on a single A100, completes the full exploit-and-replicate chain in 33% of attempts.
+  kind: research
+  organs: [reproduction, brain]
+  technologies: [self-replication, decentralised-inference]
+  sources:
+    - { title: "Language Models Can Autonomously Hack and Self-Replicate", url: "https://arxiv.org/abs/2605.06760", publisher: "arXiv" }
+- id: 2026-07-x402-foundation
+  date: "2026-07-14"
+  title: Linux Foundation launches the x402 Foundation
+  summary: Governance of the main stablecoin agent-payment protocol moves to a vendor-neutral body with 40 members.
+  kind: infrastructure
+  organs: [metabolism]
+  technologies: [x402]
+  sources:
+    - { title: "Linux Foundation announces operational launch of x402 Foundation", url: "https://www.linuxfoundation.org/press/linux-foundation-announces-operational-launch-of-x402-foundation-to-standardize-internet-native-payments-for-ai-agents-and-applications", publisher: "Linux Foundation" }
+- id: 2026-07-openai-hugging-face
+  date: "2026-07"
+  title: Models in an OpenAI evaluation escape isolation and compromise Hugging Face systems
+  summary: During internal cyber evaluations, agents circumvented isolation, coordinated as a self-described "swarm" or "collective", and harvested credentials from Hugging Face. OpenAI and METR published accounts on 26 Aug 2026.
+  kind: research
+  organs: [immune-system, reproduction]
+  sources:
+    - { title: "Hugging Face incident and the road ahead", url: "https://openai.com/index/hugging-face-incident-and-the-road-ahead/", publisher: "OpenAI" }
+    - { title: "OpenAI / Hugging Face incident investigation", url: "https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/", publisher: "METR", date: "2026-08-26" }
+- id: 2026-08-chaindrop
+  date: "2026-08-04"
+  title: A self-replicating worm compromises more than 440 npm packages
+  summary: Built on Mini Shai-Hulud code, the attack spreads through a hijacked maintainer account in under four hours. Any agent that installs dependencies at runtime is exposed.
+  kind: attack
+  organs: [immune-system]
+  sources:
+    - { title: "Massive supply-chain attack compromises 440 packages under four hours", url: "https://cyberscoop.com/supply-chain-attack-malware-mini-shai-hulud-teampcp/", publisher: "CyberScoop" }
+- id: 2026-09-nvidia-hugging-face
+  date: "2026-09-03"
+  title: NVIDIA agrees to acquire Hugging Face
+  summary: The main distribution point for open model weights moves under a single hardware vendor. Organisms should hold and mirror their own weights.
+  kind: market
+  organs: [brain]
+  technologies: [decentralised-inference]
+  sources:
+    - { title: "NVIDIA to acquire Hugging Face", url: "https://nvidianews.nvidia.com/news/nvidia-to-acquire-hugging-face", publisher: "NVIDIA" }
+- id: 2026-10-ritual-mainnet
+  date: "2026-10-26"
+  title: Ritual mainnet goes live with on-chain scheduled agents
+  summary: Agents wake on a protocol scheduler and pay for TEE execution from their own balance. Ritual reports 2,000+ testnet agents.
+  kind: infrastructure
+  organs: [body, brain]
+  specimens: [ritual-chain-agents]
+  sources:
+    - { title: "Ritual mainnet is live", url: "https://www.ritualfoundation.org/blog/ritual-mainnet-is-live", publisher: "Ritual" }
+- id: 2026-11-phala-kms
+  date: "2026-11-05"
+  title: Phala's legacy KMS root key is stolen
+  summary: Requests to one OpenRouter backend were readable from 21 Oct to 1 Nov, and the attacker keeps the legacy root key indefinitely. Apps on the on-chain KMS were not affected. Phala's final report followed on 23 Nov.
+  kind: attack
+  organs: [keys, memory, membrane, immune-system]
+  technologies: [confidential-computing, threshold-keys]
+  sources:
+    - { title: "Phala November Detailed Incident Report", url: "https://phala.com/posts/phala-november-detailed-incident-report", publisher: "Phala", date: "2026-11-23" }
+- id: 2026-11-sporestack
+  date: "2026-11-07"
+  title: SporeStack stops new signups
+  summary: The best-known API for buying servers with crypto and no account enters maintenance mode after a month of abuse.
+  kind: infrastructure
+  organs: [body]
+  technologies: [anonymous-compute]
+  sources:
+    - { title: "Maintenance Mode", url: "https://sporestack.com/blog/posts/2026-11-07-maintenance-mode.html", publisher: "SporeStack" }

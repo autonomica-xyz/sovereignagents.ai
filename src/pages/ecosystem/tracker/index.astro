@@ -1,0 +1,85 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Level from '../../../components/Level.astro';
+import Status from '../../../components/Status.astro';
+import Score from '../../../components/Score.astro';
+import { load, url, AXES, AXIS_LABEL, AXIS_Q, STATUS_LABEL, LEVELS, fmtDate, total } from '../../../lib/site';
+const { specimens } = await load();
+const kinds = [...new Set(specimens.map((s) => s.data.kind))].sort();
+const latest = specimens.reduce((a, s) => (s.data.assessed > a ? s.data.assessed : a), new Date(0));
+---
+<Base title="Tracker" section="ecosystem" crumbs={[{ href: '/', label: 'Home' }, { href: '/ecosystem/', label: 'Ecosystem' }, { label: 'Tracker' }]} description="Attempts at sovereign agents, scored L0–L5 and on five axes, with evidence.">
+  <div class="wrap">
+    <header class="phead">
+      <p class="kicker">Ecosystem</p>
+      <h1>Tracker</h1>
+      <p class="lede">{specimens.length} systems that attempt part of sovereignty, each assigned a level and scored 0–3 on five axes. Every score is justified on the system's page.</p>
+      <div class="meta-row"><span>Highest level observed <b>L{Math.max(...specimens.map((s) => s.data.level))}</b></span><span>Last assessed <b>{fmtDate(latest)}</b></span><a href="/ecosystem/methodology/">Methodology</a></div>
+    </header>
+    <form class="filters" data-filters aria-controls="tracker" onsubmit="return false">
+      <label>Search<input type="search" name="q" placeholder="Name or builder" /></label>
+      <label>Minimum level<select name="level">{LEVELS.map((l) => <option value={l.n}>L{l.n} and above</option>)}</select></label>
+      <label>Status<select name="status"><option value="">Any</option>{Object.entries(STATUS_LABEL).map(([k, v]) => <option value={k}>{v}</option>)}</select></label>
+      <label>Kind<select name="kind"><option value="">Any</option>{kinds.map((k) => <option value={k}>{k[0].toUpperCase() + k.slice(1)}</option>)}</select></label>
+      <output aria-live="polite" data-shown>{specimens.length} of {specimens.length} shown</output>
+    </form>
+    <div class="table-scroll">
+      <table class="tracker" id="tracker">
+        <thead>
+          <tr>
+            <th aria-sort="none"><button type="button" data-sort="name">System</button></th>
+            <th aria-sort="descending"><button type="button" data-sort="level">Level</button></th>
+            {AXES.map((a) => <th class="c hide-sm" aria-sort="none" title={AXIS_Q[a]}><button type="button" data-sort={a}>{AXIS_LABEL[a]}</button></th>)}
+            <th class="c" aria-sort="none"><button type="button" data-sort="total">Total</button></th>
+            <th class="hide-sm" aria-sort="none"><button type="button" data-sort="status">Status</button></th>
+          </tr>
+        </thead>
+        <tbody>
+          {specimens.map((s) => (
+            <tr data-name={s.data.name.toLowerCase()} data-by={s.data.by.toLowerCase()} data-level={s.data.level} data-status={s.data.status} data-kind={s.data.kind} data-total={total(s.data.ratings)} {...Object.fromEntries(AXES.map((a) => [`data-${a}`, s.data.ratings[a].score]))}>
+              <td class="name"><a href={url.specimen(s.id)}>{s.data.name}</a><small>{s.data.by} · {s.data.kind}</small></td>
+              <td><Level n={s.data.level} /></td>
+              {AXES.map((a) => <td class="c hide-sm"><Score score={s.data.ratings[a].score} /></td>)}
+              <td class="c">{total(s.data.ratings)}<span class="muted">/15</span></td>
+              <td class="hide-sm"><Status value={s.data.status} /></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <div class="legend"><span>Scores: ○○○ None · ●○○ Weak · ●●○ Partial · ●●● Strong</span><span>Status is stated only where evidenced.</span><span>Axis columns are hidden on narrow screens; see each system's page.</span></div>
+    <div style="height:4rem"></div>
+  </div>
+</Base>
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-filters]')!;
+  const table = document.getElementById('tracker')!;
+  const body = table.querySelector('tbody')!;
+  const rows = [...body.querySelectorAll<HTMLTableRowElement>('tr')];
+  const count = form.querySelector('[data-shown]')!;
+  function filter() {
+    const f = new FormData(form);
+    const q = String(f.get('q') || '').trim().toLowerCase();
+    const lvl = Number(f.get('level') || 0), st = String(f.get('status') || ''), kind = String(f.get('kind') || '');
+    let n = 0;
+    for (const r of rows) {
+      const d = r.dataset;
+      const show = (!q || d.name!.includes(q) || d.by!.includes(q)) && Number(d.level) >= lvl && (!st || d.status === st) && (!kind || d.kind === kind);
+      r.hidden = !show; if (show) n++;
+    }
+    count.textContent = `${n} of ${rows.length} shown`;
+  }
+  form.addEventListener('input', filter);
+  form.addEventListener('change', filter);
+  const order: Record<string, number> = { active: 0, dormant: 1, dead: 2, unknown: 3 };
+  table.querySelectorAll<HTMLButtonElement>('[data-sort]').forEach((btn) => btn.addEventListener('click', () => {
+    const key = btn.dataset.sort!;
+    const th = btn.closest('th')!;
+    const dir = th.getAttribute('aria-sort') === 'descending' ? 'ascending' : th.getAttribute('aria-sort') === 'ascending' ? 'descending' : key === 'name' || key === 'status' ? 'ascending' : 'descending';
+    table.querySelectorAll('th').forEach((x) => x.setAttribute('aria-sort', 'none'));
+    th.setAttribute('aria-sort', dir);
+    const val = (r: HTMLTableRowElement) => key === 'name' ? r.dataset.name! : key === 'status' ? order[r.dataset.status!] : Number(r.dataset[key]);
+    rows.sort((a, b) => { const x = val(a), y = val(b); const c = x < y ? -1 : x > y ? 1 : a.dataset.name!.localeCompare(b.dataset.name!); return dir === 'ascending' ? c : -c; });
+    rows.forEach((r) => body.appendChild(r));
+  }));
+</script>

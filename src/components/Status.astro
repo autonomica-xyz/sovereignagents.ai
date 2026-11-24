@@ -1,0 +1,6 @@
+---
+import { STATUS_LABEL } from '../lib/site';
+interface Props { value: string }
+const { value } = Astro.props;
+---
+<span class="status" data-st={value}><i aria-hidden="true"></i>{STATUS_LABEL[value]}</span>

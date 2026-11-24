@@ -1,0 +1,46 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Maturity from '../../../components/Maturity.astro';
+import { load, url, AXES, AXIS_LABEL, MATURITY } from '../../../lib/site';
+const { organs } = await load();
+const best = (o: (typeof organs)[number]) => o.data.options.reduce((a, b) => (MATURITY.indexOf(b.maturity) > MATURITY.indexOf(a.maturity) ? b : a)).maturity;
+---
+<Base title="Anatomy" section="blueprint" crumbs={[{ href: '/', label: 'Home' }, { href: '/blueprint/', label: 'Blueprint' }, { label: 'Anatomy' }]} description="The nine organs a sovereign agent needs, what each must do, and what remains unsolved.">
+  <div class="wrap">
+    <header class="phead">
+      <p class="kicker">Blueprint</p>
+      <h1>Anatomy of a sovereign agent</h1>
+      <p class="lede">Nine organs. Each must work without an owner. For each we set out what it must do, what threatens it, the best current options and the part nobody has solved.</p>
+    </header>
+    <section class="section">
+      <div class="organs">
+        {organs.map((o) => (
+          <a class="organ-card" href={url.organ(o.id)}>
+            <span class="num">{String(o.data.order).padStart(2, '0')}</span>
+            <h3>{o.data.title}</h3>
+            <p>{o.data.role}</p>
+            <p class="unsolved">Unsolved: {o.data.unsolved.split('. ')[0].replace(/\.$/, '')}.</p>
+          </a>
+        ))}
+      </div>
+    </section>
+    <section class="section">
+      <h2>Organs by axis</h2>
+      <p class="muted ui" style="font-size:.9rem;max-width:680px">Which of the five <a href="/blueprint/framework/">axes</a> each organ serves, and the maturity of its best available option.</p>
+      <div class="table-scroll">
+        <table class="matrix">
+          <thead><tr><th>Organ</th>{AXES.map((a) => <th class="c">{AXIS_LABEL[a]}</th>)}<th>Best option today</th></tr></thead>
+          <tbody>
+            {organs.map((o) => (
+              <tr>
+                <th><a href={url.organ(o.id)}>{o.data.title}</a></th>
+                {AXES.map((a) => <td class="c">{o.data.axes.includes(a) ? <span class="dot" role="img" aria-label="serves this axis"></span> : <span class="visually-hidden">no</span>}</td>)}
+                <td><Maturity value={best(o)} /></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</Base>

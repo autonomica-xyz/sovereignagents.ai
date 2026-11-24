@@ -1,0 +1,43 @@
+---
+import Base from '../../layouts/Base.astro';
+import { load, url, fmtDate, KIND_LABEL } from '../../lib/site';
+const { developments, organ, tech, spec } = await load();
+const years = [...new Set(developments.map((d) => d.data.date.slice(0, 4)))];
+---
+<Base title="Developments" section="ecosystem" crumbs={[{ href: '/', label: 'Home' }, { href: '/ecosystem/', label: 'Ecosystem' }, { label: 'Developments' }]} description="A dated, sourced log of the developments that changed what sovereign agents can do.">
+  <div class="wrap">
+    <header class="phead">
+      <p class="kicker">Ecosystem</p>
+      <h1>Developments</h1>
+      <p class="lede">The events that changed what a sovereign agent can do or what threatens it: new organisms, attacks, infrastructure and research. Selected and written by the editors; each is sourced.</p>
+      <div class="meta-row"><span><b>{developments.length}</b> entries</span><span>Latest <b>{fmtDate(developments[0].data.date)}</b></span></div>
+    </header>
+    <div class="single" style="max-width:860px">
+      {years.map((y) => (
+        <section>
+          <h2 style="margin-top:1.4rem">{y}</h2>
+          <ol class="devlog">
+            {developments.filter((d) => d.data.date.startsWith(y)).map((d) => (
+              <li id={d.id}>
+                <time datetime={d.data.date}>{fmtDate(d.data.date)}</time>
+                <div>
+                  <span class="tag" data-k={d.data.kind}>{KIND_LABEL[d.data.kind]}</span>
+                  <h3>{d.data.title}</h3>
+                  <p>{d.data.summary}</p>
+                  <div class="refs">
+                    Source{d.data.sources.length > 1 ? 's' : ''}: {d.data.sources.map((s, i) => <>{i > 0 && '; '}<a href={s.url} rel="noopener">{s.publisher ?? s.title}</a></>)}
+                    {(d.data.organs.length > 0 || d.data.technologies.length > 0 || d.data.specimens.length > 0) && <><br />See: {[
+                      ...d.data.organs.map((r) => ({ h: url.organ(r.id), t: organ[r.id].data.title })),
+                      ...d.data.technologies.map((r) => ({ h: url.tech(r.id), t: tech[r.id].data.title })),
+                      ...d.data.specimens.map((r) => ({ h: url.specimen(r.id), t: spec[r.id].data.name })),
+                    ].map((l, i) => <>{i > 0 && ' · '}<a href={l.h}>{l.t}</a></>)}</>}
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ))}
+    </div>
+  </div>
+</Base>

@@ -62,7 +62,7 @@ def main():
     for i, c in enumerate(chunks):
         sh(f"echo {c} {'>' if i == 0 else '>>'} /tmp/site.tgz.b64", 120)
     print(f"uploaded {len(chunks)} chunks")
-    sh(f"mkdir -p {app} && base64 -d /tmp/site.tgz.b64 > /tmp/site.tgz && gzip -t /tmp/site.tgz && tar xzf /tmp/site.tgz -C {app} && rm /tmp/site.tgz && rm /tmp/site.tgz.b64 && (nohup bash {app}/deploy/vm-setup.sh > /tmp/sa-setup.log 2>&1 &)")
+    sh(f"mkdir -p {app} && base64 -d /tmp/site.tgz.b64 > /tmp/site.tgz && gzip -t /tmp/site.tgz && find {app} -mindepth 1 -maxdepth 1 ! -name node_modules ! -name releases ! -name current ! -name .rebuild.lock -exec rm -rf {{}} + && tar xzf /tmp/site.tgz -C {app} && rm /tmp/site.tgz && rm /tmp/site.tgz.b64 && (nohup bash {app}/deploy/vm-setup.sh > /tmp/sa-setup.log 2>&1 &)")
     for _ in range(90):  # poll up to ~15 min
         time.sleep(10)
         log = sh("tail -5 /tmp/sa-setup.log", 60)

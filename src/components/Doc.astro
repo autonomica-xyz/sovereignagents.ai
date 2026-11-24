@@ -1,0 +1,25 @@
+---
+// Renders an editor-written page from content/pages with a standard header.
+import { getEntry, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { fmtDate } from '../lib/site';
+interface Props { id: string; kicker: string; section: 'blueprint' | 'ecosystem' | 'technology' | 'about'; crumbs: { href?: string; label: string }[] }
+const { id, kicker, section, crumbs } = Astro.props;
+const entry = await getEntry('pages', id);
+if (!entry) throw new Error(`missing content/pages/${id}.md`);
+const { Content } = await render(entry);
+---
+<Base title={entry.data.title} section={section} description={entry.data.summary} crumbs={crumbs}>
+  <div class="wrap">
+    <header class="phead">
+      <p class="kicker">{kicker}</p>
+      <h1>{entry.data.title}</h1>
+      <p class="lede">{entry.data.summary}</p>
+      <div class="meta-row"><span>Last reviewed <b>{fmtDate(entry.data.verified)}</b></span></div>
+    </header>
+    <div class="cols">
+      <article class="prose"><Content /><slot /></article>
+      <aside class="side"><slot name="side" /></aside>
+    </div>
+  </div>
+</Base>

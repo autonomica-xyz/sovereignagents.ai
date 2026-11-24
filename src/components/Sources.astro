@@ -1,0 +1,14 @@
+---
+import { fmtDate } from '../lib/site';
+interface Props { sources: { title: string; url: string; publisher?: string; date?: string }[]; verified?: Date; label?: string }
+const { sources, verified, label = 'Last verified' } = Astro.props;
+---
+<section class="sources" aria-labelledby="src-h">
+  <h2 id="src-h">Sources</h2>
+  <ol>
+    {sources.map((s) => (
+      <li><a href={s.url} rel="noopener">{s.title}</a>{s.publisher && <span class="muted">. {s.publisher}</span>}{s.date && <span class="muted">, {fmtDate(s.date)}</span>}</li>
+    ))}
+  </ol>
+  {verified && <p class="stamp">{label} <time datetime={verified.toISOString().slice(0, 10)}>{fmtDate(verified, true)}</time></p>}
+</section>

@@ -1,0 +1,29 @@
+---
+import Base from '../../layouts/Base.astro';
+import { load, url } from '../../lib/site';
+const { builders, tech, spec } = await load();
+---
+<Base title="Builders" section="ecosystem" crumbs={[{ href: '/', label: 'Home' }, { href: '/ecosystem/', label: 'Ecosystem' }, { label: 'Builders' }]} description="Organisations, labs and protocols supplying the parts of a sovereign agent.">
+  <div class="wrap">
+    <header class="phead">
+      <p class="kicker">Ecosystem</p>
+      <h1>Builders</h1>
+      <p class="lede">The organisations, labs and open protocols whose work supplies an organism's parts. Listed for what they build, not endorsed.</p>
+    </header>
+    <div class="table-scroll" style="padding:2rem 0 4rem">
+      <table class="builders">
+        <thead><tr><th>Builder</th><th>Builds</th><th>Technology</th><th class="hide-sm">Tracked systems</th></tr></thead>
+        <tbody>
+          {builders.map((b) => (
+            <tr id={b.id}>
+              <td><a href={b.data.url} rel="noopener">{b.data.name}</a><br /><span class="muted" style="font-weight:400;font-size:.8rem">{b.data.kind}</span></td>
+              <td>{b.data.builds}</td>
+              <td>{b.data.technologies.map((t, i) => <>{i > 0 && ', '}<a href={url.tech(t.id)}>{tech[t.id].data.title}</a></>)}</td>
+              <td class="hide-sm">{b.data.specimens.map((s, i) => <>{i > 0 && ', '}<a href={url.specimen(s.id)}>{spec[s.id].data.name}</a></>)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</Base>

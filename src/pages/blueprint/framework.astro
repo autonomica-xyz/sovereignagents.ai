@@ -1,0 +1,13 @@
+---
+import Doc from '../../components/Doc.astro';
+import Level from '../../components/Level.astro';
+import { load, url } from '../../lib/site';
+const { specimens } = await load();
+---
+<Doc id="framework" kicker="Blueprint" section="blueprint" crumbs={[{ href: '/', label: 'Home' }, { href: '/blueprint/', label: 'Blueprint' }, { label: 'Framework' }]}>
+  <div slot="side" class="box">
+    <h2>Tracked systems by level</h2>
+    <ul>{specimens.map((s) => <li style="display:flex;justify-content:space-between;gap:.6rem"><a href={url.specimen(s.id)}>{s.data.name}</a><Level n={s.data.level} /></li>)}</ul>
+    <p class="muted" style="margin-top:1rem">How levels are assigned: <a href="/ecosystem/methodology/">methodology</a>.</p>
+  </div>
+</Doc>

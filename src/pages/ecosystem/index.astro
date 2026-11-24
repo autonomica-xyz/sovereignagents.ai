@@ -1,0 +1,37 @@
+---
+import Base from '../../layouts/Base.astro';
+import LevelLadder from '../../components/LevelLadder.astro';
+import Level from '../../components/Level.astro';
+import Status from '../../components/Status.astro';
+import { load, url, fmtDate, KIND_LABEL } from '../../lib/site';
+const { specimens, developments, builders } = await load();
+const counts = [0, 1, 2, 3, 4, 5].map((n) => specimens.filter((s) => s.data.level === n).length);
+---
+<Base title="Ecosystem" section="ecosystem" crumbs={[{ href: '/', label: 'Home' }, { label: 'Ecosystem' }]} description="Attempts at sovereign agents, assessed on one framework, and the developments that matter.">
+  <div class="wrap">
+    <header class="phead">
+      <p class="kicker">Ecosystem</p>
+      <h1>Who has tried</h1>
+      <p class="lede">The systems that have attempted some part of sovereignty, scored against one framework with the evidence behind each score, and a dated record of the developments that changed what is possible.</p>
+    </header>
+    <section class="section">
+      <div class="sec-head"><h2>Tracker</h2><a href="/ecosystem/tracker/">Compare all {specimens.length} →</a></div>
+      <LevelLadder counts={counts} compact />
+      <table class="matrix" style="margin-top:1.6rem">
+        <thead><tr><th>System</th><th>Level</th><th class="hide-sm">Status</th><th class="hide-sm">Summary</th></tr></thead>
+        <tbody>{specimens.map((s) => <tr><th><a href={url.specimen(s.id)}>{s.data.name}</a></th><td><Level n={s.data.level} /></td><td class="hide-sm"><Status value={s.data.status} /></td><td class="hide-sm muted">{s.data.summary}</td></tr>)}</tbody>
+      </table>
+      <p class="muted ui" style="font-size:.85rem;margin-top:1rem">How systems are chosen and scored: <a href="/ecosystem/methodology/">methodology</a>.</p>
+    </section>
+    <section class="section">
+      <div class="sec-head"><h2>Developments</h2><a href="/ecosystem/developments/">All {developments.length} →</a></div>
+      <ol class="devlog devlog-compact">
+        {developments.slice(0, 6).map((d) => <li><time datetime={d.data.date}>{fmtDate(d.data.date)}</time><div><span class="tag" data-k={d.data.kind}>{KIND_LABEL[d.data.kind]}</span><h3>{d.data.title}</h3><p>{d.data.summary}</p></div></li>)}
+      </ol>
+    </section>
+    <section class="section">
+      <div class="sec-head"><h2>Builders</h2><a href="/ecosystem/builders/">All {builders.length} →</a></div>
+      <p class="finding">The organisations, labs and protocols whose work supplies the organs, from confidential-computing stacks to payment rails.</p>
+    </section>
+  </div>
+</Base>

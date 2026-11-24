@@ -1,0 +1,69 @@
+---
+import { render } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import Level from '../../../components/Level.astro';
+import Status from '../../../components/Status.astro';
+import Score from '../../../components/Score.astro';
+import Sources from '../../../components/Sources.astro';
+import { load, url, AXES, AXIS_LABEL, AXIS_Q, LEVELS, fmtDate, fmtSince, total } from '../../../lib/site';
+export async function getStaticPaths() {
+  const { specimens } = await load();
+  return specimens.map((s) => ({ params: { specimen: s.id } }));
+}
+const { specimen: id } = Astro.params;
+const { spec, tech, organs, developments, builders } = await load();
+const s = spec[id!];
+const d = s.data;
+const { Content } = await render(s);
+const techIds = d.technologies.map((t) => t.id);
+const organIds = organs.filter((o) => o.data.technologies.some((t) => techIds.includes(t.id)));
+const devs = developments.filter((x) => x.data.specimens.some((r) => r.id === id));
+const makers = builders.filter((b) => b.data.specimens.some((r) => r.id === id));
+---
+<Base title={d.name} section="ecosystem" description={d.summary} crumbs={[{ href: '/', label: 'Home' }, { href: '/ecosystem/', label: 'Ecosystem' }, { href: '/ecosystem/tracker/', label: 'Tracker' }, { label: d.name }]}>
+  <div class="wrap">
+    <header class="phead">
+      <p class="kicker">Tracked system · {d.kind}</p>
+      <h1>{d.name}</h1>
+      <p class="lede">{d.summary}</p>
+      <div class="meta-row"><span><Level n={d.level} name /></span><span><Status value={d.status} /></span><span>Since <b>{fmtSince(d.since)}</b></span><span>Assessed <b>{fmtDate(d.assessed)}</b></span></div>
+    </header>
+    <div class="cols">
+      <article>
+        <h2 style="margin-top:0">Level {d.level}: {LEVELS[d.level].name}</h2>
+        <p class="prose" style="margin-top:0">{d.levelNote}</p>
+        <h2>Ratings</h2>
+        <table class="ratings">
+          <tbody>
+            {AXES.map((a) => (
+              <tr><th>{AXIS_LABEL[a]}<small>{AXIS_Q[a]}</small></th><td class="s"><Score score={d.ratings[a].score} label /></td><td>{d.ratings[a].note}</td></tr>
+            ))}
+          </tbody>
+        </table>
+        <p class="muted ui" style="font-size:.85rem">Total {total(d.ratings)} of 15. <a href="/ecosystem/methodology/">How scores are assigned</a>.</p>
+        <div class="callout"><span class="tag">Lesson for the organism</span>{d.lesson}</div>
+        <h2>Record</h2>
+        <div class="prose"><Content /></div>
+        <h2>Status</h2>
+        <p class="prose" style="margin-top:0"><Status value={d.status} />. {d.statusEvidence}</p>
+        <Sources sources={d.sources} verified={d.assessed} label="Assessed" />
+      </article>
+      <aside class="side">
+        <div class="box">
+          <h2>At a glance</h2>
+          <dl>
+            <dt>Built by</dt><dd>{d.by}</dd>
+            <dt>Kind</dt><dd>{d.kind[0].toUpperCase() + d.kind.slice(1)}</dd>
+            <dt>Since</dt><dd>{fmtSince(d.since)}</dd>
+            <dt>Level</dt><dd><Level n={d.level} /></dd>
+            <dt>Status</dt><dd><Status value={d.status} /></dd>
+          </dl>
+          {techIds.length > 0 && <><h2 style="margin-top:1.6rem">Technologies</h2><ul>{techIds.map((t) => <li><a href={url.tech(t)}>{tech[t].data.title}</a></li>)}</ul></>}
+          {organIds.length > 0 && <><h2 style="margin-top:1.6rem">Organs addressed</h2><ul>{organIds.map((o) => <li><a href={url.organ(o.id)}>{o.data.title}</a></li>)}</ul></>}
+          {makers.length > 0 && <><h2 style="margin-top:1.6rem">Builders</h2><ul>{makers.map((b) => <li><a href={`/ecosystem/builders/#${b.id}`}>{b.data.name}</a></li>)}</ul></>}
+          {devs.length > 0 && <><h2 style="margin-top:1.6rem">Developments</h2><ul>{devs.map((x) => <li><span class="muted">{fmtDate(x.data.date)}</span><br /><a href={`/ecosystem/developments/#${x.id}`}>{x.data.title}</a></li>)}</ul></>}
+        </div>
+      </aside>
+    </div>
+  </div>
+</Base>
