@@ -25,6 +25,7 @@ server {
   location ~ ^/[ad]\$ { return 301 /; }
   location ~ ^/c(/.*)\$ { return 301 /nerd\$1\$is_args\$args; }
   location = /c { return 301 /nerd/; }
+  location = /nerd { return 301 /nerd/; }
   location ^~ /_astro/ { expires 30d; add_header Cache-Control "public, immutable"; }
   location ^~ /nerd/_astro/ { expires 30d; add_header Cache-Control "public, immutable"; }
   location ^~ /nerd/ { try_files \$uri \$uri/index.html \$uri/ =404; add_header Cache-Control "public, max-age=300"; error_page 404 /nerd/404.html; }
