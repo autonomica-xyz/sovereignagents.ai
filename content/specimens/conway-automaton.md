@@ -3,8 +3,8 @@ name: Conway Automaton
 kind: framework
 by: Conway Research
 since: 2026-02
-status: dormant
-statusEvidence: Last public commit 26 Aug 2026 (GitHub API, 24 Nov 2026). The README says development continues in internal environments.
+status: active
+statusEvidence: Last public commit 26 Aug 2026, within six months of assessment (GitHub API, 24 Nov 2026). The README says development has moved to Conway's internal environments, so public activity has paused.
 level: 1
 levelNote: The agent creates its own wallet, but runs in an ordinary VM on one company's cloud, where the operator can read and stop it.
 ratings:

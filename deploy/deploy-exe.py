@@ -11,7 +11,7 @@ Auth (pick one):
                               (see https://exe.dev/docs/https-api-local-key)
 Usage:  python3 deploy/deploy-exe.py [--vm sovereignagents] [--create] [--public] [--rebuild-only]
 """
-import argparse, base64, io, json, os, subprocess, sys, tarfile, time, urllib.request, urllib.error
+import argparse, base64, io, json, os, re, subprocess, sys, tarfile, time, urllib.request, urllib.error
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SKIP = {"node_modules", "dist", "content-src", "releases", "current", ".astro", ".git"}
 
@@ -47,8 +47,10 @@ def main():
     ap.add_argument("--vm", default="sovereignagents")
     ap.add_argument("--create", action="store_true", help="create the VM first")
     ap.add_argument("--public", action="store_true", help="make https://<vm>.exe.xyz public")
-    ap.add_argument("--rebuild-only", action="store_true", help="just pull the wiki and rebuild on the VM")
+    ap.add_argument("--rebuild-only", action="store_true", help="rebuild the uploaded source on the VM")
     a = ap.parse_args()
+    if not re.fullmatch(r"[a-z0-9][a-z0-9-]{0,62}", a.vm):
+        sys.exit(f"invalid VM name: {a.vm!r}")  # it is interpolated into remote commands
     vm, app = a.vm, "/home/exedev/sovereignagents-site"
     tok = token(["new", "share port", "share set-public", "share show", f"ssh {a.vm}"])
     if a.create:
