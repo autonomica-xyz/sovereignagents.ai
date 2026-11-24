@@ -10,6 +10,9 @@ const nav = [
   { id: 'technology', href: '/technology/', label: 'Technology' },
   { id: 'about', href: '/about/', label: 'About' },
 ];
+// Theme switch links keep the reader on the same page in the other edition.
+const here = Astro.url.pathname.replace(/^\/[acd](?=\/)/, '');
+const rel = /404/.test(here) ? '/' : here;
 ---
 <div class="a-bg" aria-hidden="true"></div>
 <header class="mast">
@@ -29,7 +32,7 @@ const nav = [
     <div>
       <p class="foot-brand"><svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 19h4.5v-4.5H12V10h4.5V5.5H21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>Sovereign Agents</p>
       <p class="muted">A reference on software that keeps itself alive. Every claim is sourced and dated. See the <a href="/ecosystem/methodology/">methodology</a>.</p>
-      <p class="theme-switch">Theme <a href="/a/" aria-current="true">Instrument</a><a href="/c/">Terminal</a><a href="/d/">Organism</a><a data-abs href="/">All</a></p>
+      <p class="theme-switch">Theme <a href={`/a${rel}`} aria-current="true">Instrument</a><a href={`/c${rel}`}>Terminal</a><a href={`/d${rel}`}>Organism</a><a data-abs href="/">All</a></p>
     </div>
     <ul class="foot-links"><li class="h">Read</li><li><a href="/blueprint/">Blueprint</a></li><li><a href="/ecosystem/">Ecosystem</a></li><li><a href="/technology/">Technology</a></li><li><a href="/ecosystem/developments/">Developments</a></li></ul>
     <ul class="foot-links"><li class="h">About</li><li><a href="/about/">About</a></li><li><a href="/ecosystem/methodology/">Methodology</a></li><li><a href="https://github.com/autonomica-xyz/sovereignagents.ai">Source</a></li><li><a href="https://github.com/autonomica-xyz/sovereign-agents-research">Research notebook</a></li></ul>

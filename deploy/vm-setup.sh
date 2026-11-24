@@ -19,7 +19,8 @@ server {
   root $APP/current;
   index index.html;
   gzip on; gzip_types text/css application/javascript application/json image/svg+xml; gzip_min_length 1024;
-  location /_astro/ { expires 30d; add_header Cache-Control "public, immutable"; }
+  location ~ ^/[acd]/_astro/ { expires 30d; add_header Cache-Control "public, immutable"; }
+  location ~ ^/(?<edition>[acd])/ { try_files \$uri \$uri/index.html \$uri/ =404; add_header Cache-Control "public, max-age=300"; error_page 404 /\$edition/404.html; }
   location / { try_files \$uri \$uri/index.html \$uri/ =404; add_header Cache-Control "public, max-age=300"; }
   error_page 404 /404.html;
 }

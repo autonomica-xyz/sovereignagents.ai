@@ -2,8 +2,8 @@
 """Deploy this site to an exe.dev VM over the exe.dev HTTPS API (no SSH needed).
 
 Uploads the source (not node_modules/dist) as a tarball, then runs deploy/vm-setup.sh on the VM,
-which installs Node, builds the site from the live wiki, serves it with nginx on :8000 and installs
-a timer that rebuilds every 30 minutes.
+which installs Node, builds all three editions and the chooser from the committed content, and
+serves them with nginx on :8000. There is no scheduled rebuild.
 
 Auth (pick one):
   EXE_TOKEN=exe0.…            a token whose cmds include "ssh <vm>"

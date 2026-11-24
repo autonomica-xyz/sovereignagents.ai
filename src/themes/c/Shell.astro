@@ -13,6 +13,9 @@ const wins = [
 ];
 const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const path = crumbs.slice(1);
+// Theme switch links keep the reader on the same page in the other edition.
+const here = Astro.url.pathname.replace(/^\/[acd](?=\/)/, '');
+const rel = /404/.test(here) ? '/' : here;
 ---
 <div class="crt" aria-hidden="true"></div>
 <header class="tbar">
@@ -35,7 +38,7 @@ const path = crumbs.slice(1);
 <a href="/blueprint/anatomy/">anatomy/</a>        <a href="/ecosystem/developments/">developments.log</a>  <a href="/ecosystem/methodology/">METHODOLOGY</a>
 <a href="/technology/">technology/</a>     <a href="/ecosystem/builders/">builders</a>          <a href="https://github.com/autonomica-xyz/sovereignagents.ai">src.git</a>
 <a href="https://github.com/autonomica-xyz/sovereign-agents-research">research-notebook.git</a></pre>
-    <p class="tfoot-theme"><span class="dim">theme:</span> <a href="/a/">instrument</a> <a href="/c/" aria-current="true">[terminal]</a> <a href="/d/">organism</a> <a data-abs href="/">all</a></p>
+    <p class="tfoot-theme"><span class="dim">theme:</span> <a href={`/a${rel}`}>instrument</a> <a href={`/c${rel}`} aria-current="true">[terminal]</a> <a href={`/d${rel}`}>organism</a> <a data-abs href="/">all</a></p>
   </div>
   <div class="tstatus"><span>-- NORMAL --</span><span>every claim sourced &amp; dated</span><span class="dim ts-r">utf-8 · lf</span></div>
 </footer>
