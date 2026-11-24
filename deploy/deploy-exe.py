@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Deploy this site to an exe.dev VM over the exe.dev HTTPS API (no SSH needed).
+"""Deploy the development preview to an exe.dev VM over the exe.dev HTTPS API (no SSH needed).
+
+exe.dev is the development environment and can be deployed from any branch. Production is
+GitHub Pages, published from main by .github/workflows/pages.yml. Preview builds are marked
+with a "preview" badge, noindex and a robots.txt that disallows crawling.
 
 Uploads the source (not node_modules/dist) as a tarball, then runs deploy/vm-setup.sh on the VM,
 which installs Node, builds organism mode (/) and nerd mode (/nerd/) from the committed content, and

@@ -11,6 +11,8 @@ interface Props { title: string; description?: string; section?: 'blueprint' | '
 const { title, description = 'A reference on how autonomous AI agents survive without an owner: the blueprint, the ecosystem and the technology.', section, crumbs = [] } = Astro.props;
 const full = title === 'Sovereign Agents' ? title : `${title} · Sovereign Agents`;
 // Both modes render the same content; the organism page is canonical.
+// exe.dev builds set DEPLOY_ENV=preview: they are marked as a preview and kept out of search engines.
+const preview = process.env.DEPLOY_ENV === 'preview';
 const canonical = new URL(Astro.url.pathname.replace(/^\/nerd(?=\/|$)/, '') || '/', Astro.site);
 ---
 <!doctype html>
@@ -18,17 +20,18 @@ const canonical = new URL(Astro.url.pathname.replace(/^\/nerd(?=\/|$)/, '') || '
 <head>
   <meta charset="utf-8" />
   <script is:inline>
-    // Apply the remembered mode before anything paints: organism pages live at /, nerd pages at /nerd/.
+    // A remembered nerd preference only applies when entering at the root. Any other URL is
+    // honoured as written, so a shared /nerd/ link opens in nerd mode and vice versa.
     (function () {
       try {
-        var m = localStorage.getItem('sa-mode'), p = location.pathname;
-        var nerd = p === '/nerd' || p.indexOf('/nerd/') === 0, to = null;
-        if (m === 'nerd' && !nerd) to = '/nerd' + p;
-        else if (m === 'organism' && nerd) to = p.slice(5) || '/';
-        if (to) { document.documentElement.style.visibility = 'hidden'; location.replace(to + location.search + location.hash); }
+        if (location.pathname === '/' && localStorage.getItem('sa-mode') === 'nerd') {
+          document.documentElement.style.visibility = 'hidden';
+          location.replace('/nerd/' + location.search + location.hash);
+        }
       } catch (e) {}
     })();
   </script>
+  {preview && <meta name="robots" content="noindex, nofollow" />}
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>{full}</title>
   <meta name="description" content={description} />
@@ -43,6 +46,7 @@ const canonical = new URL(Astro.url.pathname.replace(/^\/nerd(?=\/|$)/, '') || '
 <body>
   <a class="skip" href="#main">Skip to content</a>
   <Shell section={section} crumbs={crumbs}><slot /></Shell>
+  {preview && <a class="preview-badge" href="https://github.com/autonomica-xyz/sovereignagents.ai" title="Development preview on exe.dev. Production is sovereignagents.ai">preview</a>}
   <Search placeholder={theme.searchPlaceholder} prompt={theme.searchPrompt} />
 </body>
 </html>

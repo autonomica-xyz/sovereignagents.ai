@@ -33,7 +33,8 @@ const prefixLinks = {
 };
 
 export default defineConfig({
-  site: process.env.SITE_URL || 'https://sovereignagents.exe.xyz',
+  // Canonical URLs always point at production, including on the exe.dev preview.
+  site: process.env.SITE_URL || 'https://sovereignagents.ai',
   base: BASE,
   outDir: process.env.OUT_DIR || (MODE === 'nerd' ? './dist/nerd' : './dist'),
   trailingSlash: 'ignore',
