@@ -4,3 +4,6 @@ dist/
 content-src/
 .secrets/
 *.log
+.rebuild.lock
+releases/
+current

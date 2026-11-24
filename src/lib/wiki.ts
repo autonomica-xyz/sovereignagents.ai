@@ -8,6 +8,7 @@ import { Marked } from 'marked';
 
 export const ROOT = resolve(process.env.CONTENT_DIR || 'content-src');
 export const BASE_TOKEN = '__BASE__';
+const REPO_BLOB = 'https://github.com/autonomica-xyz/sovereign-agents-research/blob/main/';
 
 export type Kind = 'page' | 'hub' | 'doc' | 'meta';
 export interface Article {
@@ -71,6 +72,10 @@ marked.use({
       if (token.lang === 'mermaid') return `<div class="mermaid-wrap"><pre class="mermaid">${token.text.replace(/</g, '&lt;')}</pre></div>`;
       return false;
     },
+    // Raw HTML in markdown is shown as text, never injected.
+    html(token: any) {
+      return token.text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    },
   },
 });
 
@@ -106,7 +111,11 @@ function render(md: string, from: string) {
       return `<a class="ilink" href="${BASE_TOKEN}/${internal}"`;
     }
     if (/^https?:/.test(href)) return `<a class="xlink" target="_blank" rel="noopener" href="${href}"`;
-    return `<a href="${href}"`;
+    if (/^(mailto:|#)/.test(href)) return `<a href="${href}"`;
+    if (/^[a-z][a-z0-9+.-]*:/i.test(href)) return `<a`; // drop javascript:, data: etc.
+    // other relative files (scripts, archive, images): link to the source repo
+    const abs = posix.normalize(posix.join(posix.dirname(from), href.split('#')[0]));
+    return abs.startsWith('..') ? `<a` : `<a class="xlink" target="_blank" rel="noopener" href="${REPO_BLOB}${abs}"`;
   });
   const headings: Article['headings'] = [];
   const seen = new Map<string, number>();
@@ -176,6 +185,9 @@ function loadAll() {
     if (existsSync(join(ROOT, p))) { const a = makeArticle(p, slug, 'meta', cat); articles.push(a); }
 
   const bySlug = new Map(articles.map((a) => [a.slug, a]));
+  // Links to entries that don't exist (yet) point at the source file instead of a 404.
+  const fixDangling = (html: string) => html.replace(/href="__BASE__\/wiki\/([^"#]+)(#[^"]*)?"/g, (m, slug) => (bySlug.has(slug) ? m : `href="${REPO_BLOB}wiki/pages/${slug}.md" target="_blank" rel="noopener"`));
+  for (const a of articles) a.html = fixDangling(a.html);
   for (const a of articles) a.links = a.links.filter((l) => bySlug.has(l));
   for (const a of articles) for (const l of a.links) { const t = bySlug.get(l)!; if (!t.backlinks.includes(a.slug)) t.backlinks.push(a.slug); }
 
@@ -192,6 +204,7 @@ function loadAll() {
       const date = f.match(/^(\d{4}-\d{2}-\d{2})/)?.[1] || '';
       logs.push({ slug: basename(f, '.md'), date, title: ((t) => t.charAt(0).toUpperCase() + t.slice(1))(h1.replace(/^\d{4}-\d{2}-\d{2}\s*[—-]\s*/, '')), summary: firstParagraph(body), html, sections: [...body.matchAll(/^##\s+(.+)$/gm)].map((m) => mdInline(m[1])), links });
     }
+  for (const l of logs) l.html = fixDangling(l.html);
   logs.sort((a, b) => (b.date + b.slug).localeCompare(a.date + a.slug));
 
   // Timeline rows.

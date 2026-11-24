@@ -58,10 +58,11 @@ def main():
         print(sh(f"cd {app} && bash deploy/rebuild.sh")); return
     data = base64.b64encode(tarball()).decode()
     chunks = [data[i:i + 60000] for i in range(0, len(data), 60000)]
+    sh("rm -f /tmp/site.tgz.b64", 60)
     for i, c in enumerate(chunks):
         sh(f"echo {c} {'>' if i == 0 else '>>'} /tmp/site.tgz.b64", 120)
     print(f"uploaded {len(chunks)} chunks")
-    sh(f"mkdir -p {app} && base64 -d /tmp/site.tgz.b64 | tar xz -C {app} && rm /tmp/site.tgz.b64 && (nohup bash {app}/deploy/vm-setup.sh > /tmp/sa-setup.log 2>&1 &)")
+    sh(f"mkdir -p {app} && base64 -d /tmp/site.tgz.b64 > /tmp/site.tgz && gzip -t /tmp/site.tgz && tar xzf /tmp/site.tgz -C {app} && rm /tmp/site.tgz && rm /tmp/site.tgz.b64 && (nohup bash {app}/deploy/vm-setup.sh > /tmp/sa-setup.log 2>&1 &)")
     for _ in range(90):  # poll up to ~15 min
         time.sleep(10)
         log = sh("tail -5 /tmp/sa-setup.log", 60)

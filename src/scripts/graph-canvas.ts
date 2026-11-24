@@ -29,7 +29,7 @@ export function mountGraph(canvas: HTMLCanvasElement, data: GData, o: GraphOpts)
     const xs = nodes.map((n) => n.x), ys = nodes.map((n) => n.y);
     const bw = Math.max(...xs) - Math.min(...xs) || 1, bh = Math.max(...ys) - Math.min(...ys) || 1;
     const pad = o.padding ?? 40;
-    k = Math.min((W - pad * 2) / bw, (H - pad * 2) / bh);
+    k = Math.max(0.05, Math.min(Math.max(W - pad * 2, 40) / bw, Math.max(H - pad * 2, 40) / bh));
     tx = W / 2 - ((Math.max(...xs) + Math.min(...xs)) / 2) * k; ty = H / 2 - ((Math.max(...ys) + Math.min(...ys)) / 2) * k;
   }
   const sx = (n: GNode) => n.x * k + tx, sy = (n: GNode) => n.y * k + ty;

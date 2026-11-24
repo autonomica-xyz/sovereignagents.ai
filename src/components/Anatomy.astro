@@ -42,7 +42,7 @@ const first = payload.find((o) => o.id === 'keys')!;
     <p class="role" data-f="role">{first.role}</p>
     <ul data-f="pages">{first.pages.map((p) => <li><a href={`${base}/wiki/${p.s}`} style={`--c:${p.c}`}><i></i>{p.t}<span>{p.cl}</span></a></li>)}</ul>
   </div>
-  <script type="application/json" data-organs set:html={JSON.stringify(payload)} />
+  <script type="application/json" data-organs set:html={JSON.stringify(payload).replace(/</g, '\\u003c')} />
 </div>
 <script>
   for (const root of document.querySelectorAll<HTMLElement>('[data-anatomy]')) {
