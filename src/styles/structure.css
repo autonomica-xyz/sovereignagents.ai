@@ -273,5 +273,7 @@ main{min-height:60vh}
 @media (max-width:640px){.prose table:not(.table-scroll table){display:block;overflow-x:auto;max-width:100%}}
 
 /* exe.dev development preview marker (never rendered on production builds) */
-.preview-badge{position:fixed;left:12px;bottom:12px;z-index:60;font:600 11px/1 var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:#1a1300;background:#ffcf4a;padding:6px 9px;border-radius:4px;text-decoration:none;box-shadow:0 4px 18px rgba(0,0,0,.5);opacity:.9}
+.preview-badge{position:fixed;right:12px;bottom:12px;z-index:60;font:600 11px/1 var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:#1a1300;background:#ffcf4a;padding:6px 9px;border-radius:4px;text-decoration:none;box-shadow:0 4px 18px rgba(0,0,0,.5);opacity:.9}
 .preview-badge:hover{opacity:1}
+[data-theme="nerd"] .preview-badge{bottom:34px}
+.not-found{padding-top:3rem;padding-bottom:4rem}
