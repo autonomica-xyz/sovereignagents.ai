@@ -3,6 +3,7 @@ import Base from '../../../layouts/Base.astro';
 import Level from '../../../components/Level.astro';
 import Status from '../../../components/Status.astro';
 import Score from '../../../components/Score.astro';
+import TrackerFigure from '@theme/TrackerFigure.astro';
 import { load, url, AXES, AXIS_LABEL, AXIS_Q, STATUS_LABEL, LEVELS, fmtDate, total } from '../../../lib/site';
 const { specimens } = await load();
 const kinds = [...new Set(specimens.map((s) => s.data.kind))].sort();
@@ -16,6 +17,7 @@ const latest = specimens.reduce((a, s) => (s.data.assessed > a ? s.data.assessed
       <p class="lede">{specimens.length} systems that attempt part of sovereignty, each assigned a level and scored 0–3 on five axes. Every score is justified on the system's page.</p>
       <div class="meta-row"><span>Highest level observed <b>L{Math.max(...specimens.map((s) => s.data.level))}</b></span><span>Last assessed <b>{fmtDate(latest)}</b></span><a href="/ecosystem/methodology/">Methodology</a></div>
     </header>
+    <TrackerFigure specimens={specimens} />
     <form class="filters" data-filters aria-controls="tracker" onsubmit="return false">
       <label>Search<input type="search" name="q" placeholder="Name or builder" /></label>
       <label>Minimum level<select name="level">{LEVELS.map((l) => <option value={l.n}>L{l.n} and above</option>)}</select></label>

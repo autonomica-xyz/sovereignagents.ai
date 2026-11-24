@@ -1,0 +1,10 @@
+---
+import { bar, pad } from './Ascii';
+import { AXES, SCORE_LABEL, LEVELS, total } from '../../lib/site';
+const { specimen } = Astro.props;
+const d = specimen.data;
+---
+<div class="tbox c-spec">
+  <p class="tbox-t">┤ sa inspect {specimen.id} ├</p>
+<pre>{<><span class="dim">level   </span><span class="hb">{bar(d.level, 5, 20)}</span>{`  L${d.level} ${LEVELS[d.level].name.toLowerCase()}\n`}<span class="dim">status  </span>{`${d.status}\n`}<span class="dim">total   </span>{`${total(d.ratings)}/15\n\n`}{AXES.map((a) => <>{pad(a, 13)}<span class:list={['hb', d.ratings[a].score === 0 && 'zero']}>{bar(d.ratings[a].score, 3, 15)}</span>{`  ${d.ratings[a].score}/3 `}<span class="dim">{SCORE_LABEL[d.ratings[a].score].toLowerCase()}</span>{'\n'}</>)}</>}</pre>
+</div>

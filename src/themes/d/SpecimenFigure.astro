@@ -1,0 +1,13 @@
+---
+import Plate from './Plate.astro';
+import { AXES, AXIS_LABEL, SCORE_LABEL, fmtSince } from '../../lib/site';
+const { specimen } = Astro.props;
+const d = specimen.data;
+---
+<figure class="d-spec">
+  <Plate specimen={specimen} size={320} detail />
+  <figcaption>
+    <span class="fig">Plate</span> <em>{d.name}</em>, {d.kind}, first observed {fmtSince(d.since)}. Level {d.level}.
+    <dl>{AXES.map((a) => <><dt>{AXIS_LABEL[a]}</dt><dd><span class="sp" style={`--v:${d.ratings[a].score / 3}`}></span>{SCORE_LABEL[d.ratings[a].score]}</dd></>)}</dl>
+  </figcaption>
+</figure>

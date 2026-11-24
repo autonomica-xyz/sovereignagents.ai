@@ -1,0 +1,10 @@
+---
+import { organismHtml } from './Ascii';
+import { url } from '../../lib/site';
+const { organs } = Astro.props;
+const art = organismHtml(organs.map((o: any) => o.id), organs.map((o: any) => o.data.title), (id) => url.organ(id));
+---
+<section class="c-grid2" style="margin-top:2rem">
+  <div class="tbox"><p class="tbox-t">┤ fig.1 organism ├</p><pre class="organism" aria-label="ASCII diagram of the organism; numbered markers link to each organ">{<Fragment set:html={art} />}</pre></div>
+  <div class="tbox"><p class="tbox-t">┤ legend ├</p><ol class="legend-c">{organs.map((o: any) => <li><a href={url.organ(o.id)}><span class="k">[{o.data.order}]</span> {o.data.title.toLowerCase()}</a><span class="dim"> {o.data.role.split('.')[0].toLowerCase()}</span></li>)}</ol></div>
+</section>

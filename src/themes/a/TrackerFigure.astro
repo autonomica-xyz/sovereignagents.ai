@@ -1,0 +1,15 @@
+---
+// Signature: small-multiple radars, one per tracked system, ordered by level.
+import Radar from './Radar.astro';
+import { AXES, url, total } from '../../lib/site';
+const { specimens } = Astro.props;
+---
+<section class="a-multiples" aria-label="Five-axis profile of each tracked system">
+  {specimens.map((s: any) => (
+    <a class="a-mult" href={url.specimen(s.id)}>
+      <Radar id={`m-${s.id}`} size={150} labels={false} series={[{ values: AXES.map((a) => s.data.ratings[a].score), label: s.data.name, strong: true }]} />
+      <span class="a-mult-n">{s.data.name}</span>
+      <span class="a-mult-m"><b>L{s.data.level}</b> · {total(s.data.ratings)}/15</span>
+    </a>
+  ))}
+</section>

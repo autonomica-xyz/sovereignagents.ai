@@ -1,0 +1,5 @@
+---
+import { url } from '../../lib/site';
+const { organs, highlight } = Astro.props;
+---
+<ol class="org-legend">{organs.map((o: any) => <li class:list={[highlight === o.id && 'on']}><a href={url.organ(o.id)}><span class="n">{o.data.order}</span><span class="t">{o.data.title}</span><span class="r">{o.data.role.split('.')[0]}</span></a></li>)}</ol>

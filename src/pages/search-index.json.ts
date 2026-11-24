@@ -23,5 +23,7 @@ export async function GET() {
     ...builders.map((b) => ({ id: `b:${b.id}`, u: `/ecosystem/builders/#${b.id}`, t: b.data.name, cl: 'Builder', s: b.data.builds, x: '' })),
     ...pages.filter((p) => pageUrl[p.id]).map((p) => ({ id: `p:${p.id}`, u: pageUrl[p.id], t: p.data.title, cl: 'Page', s: p.data.summary, x: plain(p.body) })),
   ];
+  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+  for (const d of docs) d.u = base + d.u;
   return new Response(JSON.stringify(docs), { headers: { 'Content-Type': 'application/json' } });
 }

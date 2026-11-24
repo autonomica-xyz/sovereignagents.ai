@@ -1,0 +1,41 @@
+---
+import '@fontsource-variable/jetbrains-mono/wght.css';
+import '@fontsource-variable/jetbrains-mono/wght-italic.css';
+import './theme.css';
+interface Props { section?: string; crumbs: { href?: string; label: string }[] }
+const { section = 'home', crumbs } = Astro.props;
+const wins = [
+  { id: 'home', href: '/', label: 'home' },
+  { id: 'blueprint', href: '/blueprint/', label: 'blueprint' },
+  { id: 'ecosystem', href: '/ecosystem/', label: 'ecosystem' },
+  { id: 'technology', href: '/technology/', label: 'technology' },
+  { id: 'about', href: '/about/', label: 'about' },
+];
+const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const path = crumbs.slice(1);
+---
+<div class="crt" aria-hidden="true"></div>
+<header class="tbar">
+  <a class="tbar-sess" href="/" aria-label="Sovereign Agents, home">[sovereign-agents]</a>
+  <nav class="tbar-wins" aria-label="Main">
+    {wins.map((w, i) => <a href={w.href} aria-current={section === w.id ? 'page' : undefined}><span class="n">{i}:</span>{w.label}{section === w.id ? '*' : ''}</a>)}
+  </nav>
+  <button class="tbar-search" type="button" data-open-search aria-label="Search (press /)"><kbd>/</kbd> grep</button>
+</header>
+{path.length > 0 && (
+  <nav class="wrap prompt-crumbs" aria-label="Breadcrumb">
+    <span class="pc-host">sa@field</span>:<a href="/" class="pc-dir">~</a>{path.map((c) => <>/{c.href ? <a class="pc-dir" href={c.href}>{slug(c.label)}</a> : <span class="pc-dir cur" aria-current="page">{slug(c.label)}</span>}</>)}<span class="pc-sign">$</span><span class="cursor" aria-hidden="true"></span>
+  </nav>
+)}
+<main id="main"><slot /></main>
+<footer class="tfoot">
+  <div class="wrap">
+    <pre class="tfoot-ls" aria-label="Site map"><span class="dim">$ ls -1 ~/</span>
+<a href="/blueprint/">blueprint/</a>      <a href="/ecosystem/tracker/">tracker/</a>        <a href="/about/">ABOUT</a>
+<a href="/blueprint/anatomy/">anatomy/</a>        <a href="/ecosystem/developments/">developments.log</a>  <a href="/ecosystem/methodology/">METHODOLOGY</a>
+<a href="/technology/">technology/</a>     <a href="/ecosystem/builders/">builders</a>          <a href="https://github.com/autonomica-xyz/sovereignagents.ai">src.git</a>
+<a href="https://github.com/autonomica-xyz/sovereign-agents-research">research-notebook.git</a></pre>
+    <p class="tfoot-theme"><span class="dim">theme:</span> <a href="/a/">instrument</a> <a href="/c/" aria-current="true">[terminal]</a> <a href="/d/">organism</a> <a data-abs href="/">all</a></p>
+  </div>
+  <div class="tstatus"><span>-- NORMAL --</span><span>every claim sourced &amp; dated</span><span class="dim ts-r">utf-8 · lf</span></div>
+</footer>

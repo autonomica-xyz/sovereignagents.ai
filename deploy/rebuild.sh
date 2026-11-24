@@ -10,7 +10,7 @@ flock -n 9 || { echo "[rebuild] another rebuild is running"; exit 0; }
 mkdir -p releases
 REL="$APP/releases/$(date +%Y%m%d%H%M%S)-$$"
 trap 'rm -rf "$REL"' ERR
-OUT_DIR="$REL" npx astro build --silent
+OUT_DIR="$REL" node scripts/build-all.mjs  # builds /a/, /c/, /d/ and the chooser at /
 node scripts/check-links.mjs "$REL"  # refuse to go live with broken internal links
 trap - ERR
 ln -sfn "$REL" "$APP/current.tmp" && mv -Tf "$APP/current.tmp" "$APP/current"

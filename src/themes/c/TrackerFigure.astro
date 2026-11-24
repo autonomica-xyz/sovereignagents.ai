@@ -1,0 +1,12 @@
+---
+import { bar, pad } from './Ascii';
+import { LEVELS } from '../../lib/site';
+const { specimens } = Astro.props;
+const counts = LEVELS.map((l) => specimens.filter((s: any) => s.data.level === l.n).length);
+const max = Math.max(...counts);
+const top = Math.max(...specimens.map((s: any) => s.data.level));
+---
+<div class="tbox" style="margin-top:2rem">
+  <p class="tbox-t">┤ sa levels --histogram ├</p>
+  <pre class="hist">{LEVELS.map((l) => <>{`L${l.n} │`}<span class:list={['hb', counts[l.n] === 0 && 'zero']}>{bar(counts[l.n], max, 24)}</span>{` ${String(counts[l.n]).padStart(2)}  `}<span class="dim">{pad(l.name.toLowerCase(), 25)}</span>{l.n === top + 1 ? <span class="warn">← buildable, not observed</span> : ''}{'\n'}</>)}</pre>
+</div>

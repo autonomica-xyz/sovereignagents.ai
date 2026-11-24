@@ -5,6 +5,7 @@ import Level from '../../../components/Level.astro';
 import Status from '../../../components/Status.astro';
 import Score from '../../../components/Score.astro';
 import Sources from '../../../components/Sources.astro';
+import SpecimenFigure from '@theme/SpecimenFigure.astro';
 import { load, url, AXES, AXIS_LABEL, AXIS_Q, LEVELS, fmtDate, fmtSince, total } from '../../../lib/site';
 export async function getStaticPaths() {
   const { specimens } = await load();
@@ -30,6 +31,7 @@ const makers = builders.filter((b) => b.data.specimens.some((r) => r.id === id))
     </header>
     <div class="cols">
       <article>
+        <SpecimenFigure specimen={s} />
         <h2 style="margin-top:0">Level {d.level}: {LEVELS[d.level].name}</h2>
         <p class="prose" style="margin-top:0">{d.levelNote}</p>
         <h2>Ratings</h2>

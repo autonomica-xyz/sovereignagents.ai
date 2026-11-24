@@ -8,6 +8,18 @@ A reference on sovereign agents: software that holds its own keys, pays for its 
 
 Organs link to technologies, technologies to the tracked systems and builders using them, and developments to all three.
 
+## Visual directions
+
+The same content and routes are built three times, once per visual direction, with a chooser at `/`:
+
+| Prefix | Theme | Signature |
+|---|---|---|
+| `/a/` | Instrument: dark, technical | A glowing sovereignty staircase with every tracked system on its step; five-axis radars |
+| `/c/` | Terminal: phosphor on black | Boot log, a clickable ASCII organism, `tail -f` of developments, grep-style search |
+| `/d/` | Organism: bioluminescent field guide | The agent drawn as an SVG cell with nine organelles; specimen plates generated from scores |
+
+Pages in `src/pages/` and components in `src/components/` are shared. Each theme lives in `src/themes/<id>/` and supplies `config.ts`, `Shell.astro` (header and footer), `Home.astro`, four figure components (`AnatomyFigure`, `OrganFigure`, `TrackerFigure`, `SpecimenFigure`) and `theme.css`, which sets the design tokens used by `src/styles/structure.css`. The build resolves `@theme` to the chosen theme and prefixes internal links with its base path. The chooser is plain HTML in `chooser/`.
+
 ## Content
 
 All content is editor-owned and lives in `content/`. It is a distillation of the research notebook ([sovereign-agents-research](https://github.com/autonomica-xyz/sovereign-agents-research)), not a mirror of it: only claims that have been checked against sources are included.
@@ -37,9 +49,9 @@ Requires Node 22.23.4 or later.
 
 ```sh
 npm ci
-npm run dev        # http://localhost:4321
-npm run build      # static site in dist/
-npm run check      # every internal link and #anchor in dist/
+THEME=d npm run dev   # one theme (a, c or d) at http://localhost:4321/d/
+npm run build         # all three themes and the chooser into dist/
+npm run check         # every internal link and #anchor in dist/
 ```
 
 ## Deploy

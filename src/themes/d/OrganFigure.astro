@@ -1,0 +1,8 @@
+---
+import Organism from './Organism.astro';
+const { organ, organs } = Astro.props;
+---
+<figure class="d-fig d-fig-organ">
+  <Organism organs={organs} highlight={organ.id} labels={false} idp="org" />
+  <figcaption><span class="fig">Fig. {organ.data.order}</span> {organ.data.title}, highlighted in the whole organism.</figcaption>
+</figure>

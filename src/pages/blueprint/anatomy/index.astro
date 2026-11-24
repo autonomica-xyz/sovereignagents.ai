@@ -1,6 +1,7 @@
 ---
 import Base from '../../../layouts/Base.astro';
 import Maturity from '../../../components/Maturity.astro';
+import AnatomyFigure from '@theme/AnatomyFigure.astro';
 import { load, url, AXES, AXIS_LABEL, MATURITY } from '../../../lib/site';
 const { organs } = await load();
 const best = (o: (typeof organs)[number]) => o.data.options.reduce((a, b) => (MATURITY.indexOf(b.maturity) > MATURITY.indexOf(a.maturity) ? b : a)).maturity;
@@ -12,6 +13,7 @@ const best = (o: (typeof organs)[number]) => o.data.options.reduce((a, b) => (MA
       <h1>Anatomy of a sovereign agent</h1>
       <p class="lede">Nine organs. Each must work without an owner. For each we set out what it must do, what threatens it, the best current options and the part nobody has solved.</p>
     </header>
+    <AnatomyFigure organs={organs} />
     <section class="section">
       <div class="organs">
         {organs.map((o) => (

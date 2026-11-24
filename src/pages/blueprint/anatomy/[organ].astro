@@ -4,6 +4,7 @@ import Base from '../../../layouts/Base.astro';
 import Maturity from '../../../components/Maturity.astro';
 import Level from '../../../components/Level.astro';
 import Sources from '../../../components/Sources.astro';
+import OrganFigure from '@theme/OrganFigure.astro';
 import { load, url, AXIS_LABEL, fmtDate } from '../../../lib/site';
 export async function getStaticPaths() {
   const { organs } = await load();
@@ -30,6 +31,7 @@ const prev = organs[i - 1], next = organs[i + 1];
     </header>
     <div class="cols">
       <article>
+        <OrganFigure organ={o} organs={organs} />
         <h2 style="margin-top:0">What it must do</h2>
         <ul class="must">{d.must.map((m) => <li>{m}</li>)}</ul>
         <div class="threat"><h2>Threat</h2><p>{d.threat}</p></div>
