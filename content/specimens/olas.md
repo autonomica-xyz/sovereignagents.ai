@@ -16,7 +16,7 @@ ratings:
 summary: A long-running agent network whose agents hold smart accounts, trade, and hire each other on an on-chain marketplace.
 lesson: An agent economy at scale exists. The agents in it are employees of their owners, not organisms.
 technologies: []
-assessed: 2026-11-24
+assessed: 2026-11-27
 sources:
   - { title: "The Next Phase of Olas Staking", url: "https://olas.network/blog/lower-emissions", publisher: "Olas", date: "2026-06-29" }
   - { title: "Q3 2026 roundup", url: "https://olas.network/blog/q3-2026", publisher: "Olas", date: "2026-10-01" }

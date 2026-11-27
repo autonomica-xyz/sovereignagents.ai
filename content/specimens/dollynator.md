@@ -16,7 +16,7 @@ ratings:
 summary: An academic experiment in which bots earned money, bought their next VPS and installed a mutated child. The earliest working organism loop.
 lesson: The full metabolic loop was closed in 2019. What it lacked was a membrane.
 technologies: [self-replication, anonymous-compute]
-assessed: 2026-11-24
+assessed: 2026-11-27
 sources:
   - { title: "Dollynator", url: "https://github.com/Tribler/Dollynator", publisher: "TU Delft Tribler lab" }
 ---

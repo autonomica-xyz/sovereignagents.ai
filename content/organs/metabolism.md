@@ -12,7 +12,7 @@ threat: Starvation, issuer freezes, payment deplatforming, and a public balance 
 options:
   - name: Bitcoin and Lightning, with L402 for paid API calls
     maturity: production
-    note: L402 answers HTTP 402 with a Lightning invoice and a macaroon, so a machine can pay per call with no account.
+    note: L402 answers HTTP 402 with a Lightning invoice and a macaroon, so a machine can pay per call with no account. pi402, released 12 November 2026, uses this to buy inference in bitcoin.
     technology: lightning-l402
   - name: x402 stablecoin payments over HTTP
     maturity: production
@@ -24,9 +24,10 @@ options:
     technology: ecash
 unsolved: Income. No tracked organism covers its own inference and hosting from services it sells. Botto, the strongest earner, sells art through a human-governed DAO.
 technologies: [lightning-l402, x402, ecash]
-verified: 2026-11-24
+verified: 2026-11-27
 sources:
   - { title: "L402", url: "https://docs.lightning.engineering/the-lightning-network/l402", publisher: "Lightning Labs" }
+  - { title: "Announcing pi402", url: "https://lightning.engineering/posts/2026-11-12-pi-402/", publisher: "Lightning Labs", date: "2026-11-12" }
   - { title: "Linux Foundation announces operational launch of x402 Foundation", url: "https://www.linuxfoundation.org/press/linux-foundation-announces-operational-launch-of-x402-foundation-to-standardize-internet-native-payments-for-ai-agents-and-applications", publisher: "Linux Foundation", date: "2026-07-14" }
   - { title: "Botto 2025 year in review", url: "https://botto.com/dao/digest/2025-year-in-review", publisher: "BottoDAO" }
   - { title: "Cashu NUTs specification", url: "https://github.com/cashubtc/nuts", publisher: "Cashu" }

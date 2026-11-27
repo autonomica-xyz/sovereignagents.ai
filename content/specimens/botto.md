@@ -16,7 +16,7 @@ ratings:
 summary: A "decentralised autonomous artist" that has sold its work at weekly auctions since 2021. The longest-running AI entity that earns from a product.
 lesson: Real, recurring income is possible. Funding is the organ most agents lack, and Botto has it while lacking almost everything else.
 technologies: []
-assessed: 2026-11-24
+assessed: 2026-11-27
 sources:
   - { title: "2025 year in review", url: "https://botto.com/dao/digest/2025-year-in-review", publisher: "BottoDAO" }
   - { title: "Botto, the AI artist, at Art Basel Hong Kong", url: "https://www.cnn.com/2026/03/26/style/botto-ai-artist-art-basel-hong-kong-intl-hnk", publisher: "CNN", date: "2026-03-26" }

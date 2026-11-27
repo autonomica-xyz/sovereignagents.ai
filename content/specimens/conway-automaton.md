@@ -16,7 +16,7 @@ ratings:
 summary: An open-source agent that pays for its own compute, edits its own code and can fund children, and dies when the money runs out.
 lesson: Mortality as a design principle is compelling. A single cloud, a single code source and a plain VM leave three single points of failure.
 technologies: [x402, self-replication]
-assessed: 2026-11-24
+assessed: 2026-11-27
 sources:
   - { title: "Conway-Research/automaton", url: "https://github.com/Conway-Research/automaton", publisher: "GitHub" }
 ---

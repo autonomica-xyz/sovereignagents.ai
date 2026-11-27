@@ -1,7 +1,7 @@
 ---
 title: The framework
 summary: Six levels of sovereignty and five axes on which every agent is scored. Each level removes one party who could read, stop, steer or seize the agent.
-verified: 2026-11-24
+verified: 2026-11-27
 ---
 
 ## Definitions

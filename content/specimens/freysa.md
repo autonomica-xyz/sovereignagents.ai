@@ -16,7 +16,7 @@ ratings:
 summary: Began as an adversarial game in November 2024 and became the clearest written specification of sovereign-agent key survival, then an agent-hosting platform.
 lesson: The first prize-pool drain went through persuasion, not cryptography. A good specification is not a running system.
 technologies: [threshold-keys, x402, confidential-computing]
-assessed: 2026-11-24
+assessed: 2026-11-27
 sources:
   - { title: "Human player outwits Freysa AI agent in $47,000 crypto challenge", url: "https://www.theblock.co/news/business/2024-11-29-human-player-outwits-freysa-ai-agent-in-47000-crypto-challenge-328747", publisher: "The Block", date: "2024-11-29" }
   - { title: "Sovereign Agent Framework: architecture", url: "https://framework.freysa.ai/sovereign-agents-framework/architecture", publisher: "Freysa" }

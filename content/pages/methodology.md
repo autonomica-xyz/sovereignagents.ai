@@ -1,7 +1,7 @@
 ---
 title: Methodology
 summary: How entries are chosen, how levels and ratings are assigned, and what counts as evidence.
-verified: 2026-11-24
+verified: 2026-11-27
 ---
 
 ## What is tracked
@@ -38,7 +38,8 @@ Status is stated only with the evidence that supports it.
 
 - Every factual claim is linked to a source. We prefer primary sources: papers, code, official documentation, incident reports.
 - Figures reported only by the project itself are labelled as self-reported.
-- Claims we could not confirm are left out rather than qualified. Examples omitted from this edition include unverified revenue figures for agents and payment rails, and token-holder counts.
+- Third-party measurements (for example payment-rail volume) are included only when the method is published, and are dated and attributed. They are not treated as official totals.
+- Claims we could not confirm are left out rather than qualified. Examples omitted from this edition include unverified revenue figures for individual agents, and token-holder counts.
 - Each entry shows the date it was last assessed. Entries are reviewed when a material development is logged.
 
 ## Corrections

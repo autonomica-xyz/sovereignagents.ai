@@ -16,7 +16,7 @@ ratings:
 summary: An AI-native Layer 1 that calls its on-chain agents "sovereign agents". They wake on a protocol scheduler and pay for their own execution.
 lesson: Removing the operator's server is real progress. Sovereign from servers is not sovereign from the network.
 technologies: [confidential-computing, decentralised-inference]
-assessed: 2026-11-24
+assessed: 2026-11-27
 sources:
   - { title: "Ritual mainnet is live", url: "https://www.ritualfoundation.org/blog/ritual-mainnet-is-live", publisher: "Ritual", date: "2026-10-26" }
   - { title: "Ritual developer docs", url: "https://docs.ritualfoundation.org/", publisher: "Ritual" }

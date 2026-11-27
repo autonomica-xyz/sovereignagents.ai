@@ -16,7 +16,7 @@ ratings:
 summary: A fine-tuned language-model persona that posted on X from June 2024, received $50,000 in bitcoin from Marc Andreessen, and became the first AI widely described as a crypto millionaire.
 lesson: An AI persona can attract capital by itself. Capital it cannot hold is not sovereignty.
 technologies: []
-assessed: 2026-11-24
+assessed: 2026-11-27
 sources:
   - { title: "Truth Terminal: The AI bot that became a real-life millionaire", url: "https://www.bbc.com/future/article/20251008-truth-terminal-the-ai-bot-that-became-a-real-life-millionaire", publisher: "BBC Future", date: "2025-10-08" }
   - { title: "Truth Collective", url: "https://www.truthcollective.foundation/", publisher: "Truth Collective" }

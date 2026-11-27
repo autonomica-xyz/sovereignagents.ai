@@ -16,7 +16,7 @@ ratings:
 summary: The first public demonstration that an AI can hold its own keys and a platform account so that its creators cannot take them back.
 lesson: Exclusive control is achievable in a TEE. Survival across machine loss is a separate problem it did not address.
 technologies: [confidential-computing]
-assessed: 2026-11-24
+assessed: 2026-11-27
 sources:
   - { title: "Setting Your Pet Rock Free", url: "https://nousresearch.com/setting-your-pet-rock-free", publisher: "Nous Research / Teleport", date: "2024-10" }
   - { title: "GitHub API: tee-he-he/err_err_ttyl (access blocked, reason tos)", url: "https://api.github.com/repos/tee-he-he/err_err_ttyl", publisher: "GitHub" }

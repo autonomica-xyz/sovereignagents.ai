@@ -16,7 +16,7 @@ ratings:
 summary: An evolution experiment in which TEE agents launched tokens and reproduced when a token crossed a market-cap threshold.
 lesson: Gated reproduction works mechanically. Speculative income does not keep a lineage alive.
 technologies: [self-replication, confidential-computing]
-assessed: 2026-11-24
+assessed: 2026-11-27
 sources:
   - { title: "Spore in the Wild", url: "https://arxiv.org/abs/2506.04236", publisher: "Hu and Rong (arXiv)", date: "2025-06" }
   - { title: "spore.fun status API", url: "https://www.spore.fun/api/trpc/status,listAgent?batch=1&input=%7B%7D", publisher: "spore.fun", date: "2026-11-24" }

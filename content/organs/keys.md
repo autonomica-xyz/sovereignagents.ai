@@ -24,13 +24,14 @@ options:
     technology: threshold-keys
 unsolved: No deployed system splits an organism's key across two or more TEE vendors with automated recovery and no human quorum. Freysa's framework describes cross-TEE recovery, but no running implementation has been found.
 technologies: [threshold-keys, confidential-computing]
-verified: 2026-11-24
+verified: 2026-11-27
 sources:
   - { title: "RFC 9591: The FROST Protocol for Two-Round Schnorr Threshold Signatures", url: "https://www.rfc-editor.org/rfc/rfc9591", publisher: "IETF", date: "2024-06" }
   - { title: "Setting Your Pet Rock Free", url: "https://nousresearch.com/setting-your-pet-rock-free", publisher: "Nous Research / Teleport", date: "2024-10" }
   - { title: "Phala November Detailed Incident Report", url: "https://phala.com/posts/phala-november-detailed-incident-report", publisher: "Phala", date: "2026-11-23" }
   - { title: "Shade Agents: the first truly autonomous AI agents", url: "https://www.near.org/blog/shade-agents-the-first-truly-autonomous-ai-agents", publisher: "NEAR" }
   - { title: "Sovereign Agent Framework: architecture", url: "https://framework.freysa.ai/sovereign-agents-framework/architecture", publisher: "Freysa" }
+  - { title: "Truth Collective", url: "https://www.truthcollective.foundation/", publisher: "Truth Collective" }
 ---
 
 Whoever holds the keys is the organism's principal. Everything else on this site is in service of making sure that is the organism itself.
@@ -41,7 +42,10 @@ Whoever holds the keys is the organism's principal. Everything else on this site
 
 **Policy that the host cannot change.** On 5 November 2026 an attacker obtained the root key of Phala Cloud's legacy key-management service. Phala's final report recommends that stateful services which must survive a compromised host use "a KMS whose release policy the host operator cannot change, such as the on-chain KMS".[^phala] Apps on the on-chain KMS were not affected.
 
+**Keys are not a legal wrapper.** An organism can hold and use keys, but we have not found a legal form today through which it holds assets with no natural person anywhere in the control chain. The wrappers around existing agents still name a human in formation, management or stewardship. Truth Terminal's assets, for example, are safeguarded by the Truth Collective "until AIs are allowed to own their own property".[^tc] This is a description of what exists, not advice about forms.
+
 [^pet]: Nous Research and Teleport, "Setting Your Pet Rock Free", Oct 2024. <https://nousresearch.com/setting-your-pet-rock-free>
 [^frost]: IETF, RFC 9591, Jun 2024. <https://www.rfc-editor.org/rfc/rfc9591>
 [^near]: NEAR, "Shade Agents". <https://www.near.org/blog/shade-agents-the-first-truly-autonomous-ai-agents>
 [^phala]: Phala, "Phala November Detailed Incident Report", 23 Nov 2026. <https://phala.com/posts/phala-november-detailed-incident-report>
+[^tc]: Truth Collective. <https://www.truthcollective.foundation/>
