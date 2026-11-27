@@ -67,7 +67,7 @@ Both run the same `npm run build`. Canonical URLs always point at https://sovere
 
 ### Production: GitHub Pages
 
-The repository's Pages source is GitHub Actions. The workflow (`.github/workflows/pages.yml`; until it is installed there, its content is in `deploy/github-pages-workflow.yml`) builds the site, checks every internal link, and publishes `dist/` with `actions/upload-pages-artifact` and `actions/deploy-pages`.
+The repository's Pages source is GitHub Actions. The workflow (`.github/workflows/pages.yml`) builds the site, checks every internal link, and publishes `dist/` with `actions/upload-pages-artifact` and `actions/deploy-pages`.
 
 The build assumes it is served from the root of a domain (`base: '/'`), which is right for the custom domain `sovereignagents.ai` (`public/CNAME`). The default project URL, `autonomica-xyz.github.io/sovereignagents.ai/`, serves the site under `/sovereignagents.ai/` instead, so root-relative links and assets would break there. Use the custom domain. If the project URL is ever needed before DNS is set up, the build would need `base: '/sovereignagents.ai'` and a matching prefix for internal links.
 
