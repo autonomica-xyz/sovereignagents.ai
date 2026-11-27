@@ -1,0 +1,51 @@
+---
+import Organism from './Organism.astro';
+import Legend from './Legend.astro';
+import Plate from './Plate.astro';
+import { ROMAN } from './geom';
+import { url, fmtDate, KIND_LABEL, LEVELS } from '../../lib/site';
+const { organs, technologies, specimens, developments } = Astro.props;
+const top = Math.max(...specimens.map((s: any) => s.data.level));
+---
+<section class="d-hero">
+  <div class="wrap">
+    <p class="d-eyebrow">A field guide to digital organisms · Edition of November 2026</p>
+    <h1 class="d-h1">Anatomy of a <em>sovereign</em> agent</h1>
+    <p class="d-lede">Software that holds its own keys, pays for its own compute and lives where no one can read or stop it is an organism. It must feed, defend its membrane, remember, and reproduce. This guide describes its anatomy, catalogues the specimens found so far, and assesses the technologies it can be built from.</p>
+  </div>
+  <figure class="d-fig wrap">
+    <Organism organs={organs} idp="home" />
+    <figcaption><span class="fig">Fig. 1</span> The nine organs of a sovereign agent, drawn as a single cell. Select an organelle to read about it.</figcaption>
+    <Legend organs={organs} />
+  </figure>
+</section>
+
+<section class="wrap d-census">
+  <div><b>L{top}</b><span>Highest level observed in the wild</span></div>
+  <div><b>{specimens.length}</b><span>Specimens catalogued</span></div>
+  <div><b>{organs.length}</b><span>Organs described</span></div>
+  <div><b>{technologies.length}</b><span>Technologies assessed</span></div>
+</section>
+
+<section class="wrap d-chapters">
+  <a href="/blueprint/" class="d-ch"><span class="rn">I</span><h2>Blueprint</h2><p class="it">What an organism needs</p><p>Nine organs, each with its threat, its best current options and the part nobody has solved. Six levels of sovereignty and a build path to the third.</p></a>
+  <a href="/ecosystem/" class="d-ch"><span class="rn">II</span><h2>Ecosystem</h2><p class="it">Specimens in the wild</p><p>The attempts we could verify, pressed and catalogued: its level, its five-axis profile, its status and the lesson it leaves.</p></a>
+  <a href="/technology/" class="d-ch"><span class="rn">III</span><h2>Technology</h2><p class="it">Materials for an organism</p><p>Explainers on the components an organism can be built from, with maturity and the ways each one fails.</p></a>
+</section>
+
+<section class="wrap d-plates-sec">
+  <div class="d-sec-head"><div><p class="d-eyebrow">Plates I–{ROMAN[specimens.length - 1]}</p><h2>Specimens</h2></div><a href="/ecosystem/tracker/">The full catalogue →</a></div>
+  <p class="d-note">Each form is drawn from the specimen's own scores: spine length follows privacy, custody, funding, continuity and independence; the rings count its level. No specimen has grown past L{top}.</p>
+  <div class="d-plates">
+    {specimens.map((s: any, i: number) => (
+      <a class="d-plate" href={url.specimen(s.id)}><span class="pl-no">Pl. {ROMAN[i]}</span><Plate specimen={s} /><span class="pl-name">{s.data.name}</span><span class="pl-meta">L{s.data.level} · {LEVELS[s.data.level].name}</span></a>
+    ))}
+  </div>
+</section>
+
+<section class="wrap d-notes">
+  <div class="d-sec-head"><div><p class="d-eyebrow">Field notes</p><h2>Recent observations</h2></div><a href="/ecosystem/developments/">All {developments.length} →</a></div>
+  <ol class="d-notes-list">
+    {developments.slice(0, 5).map((d: any) => <li><time datetime={d.data.date}>{fmtDate(d.data.date, true)}</time><div><span class="tag" data-k={d.data.kind}>{KIND_LABEL[d.data.kind]}</span><a href={`/ecosystem/developments/#${d.id}`}>{d.data.title}</a><p>{d.data.summary}</p></div></li>)}
+  </ol>
+</section>

@@ -1,0 +1,12 @@
+---
+import Plate from './Plate.astro';
+import { ROMAN } from './geom';
+import { url, LEVELS } from '../../lib/site';
+const { specimens } = Astro.props;
+---
+<section class="d-plates d-plates-page" aria-label="Specimen plates">
+  {specimens.map((s: any, i: number) => (
+    <a class="d-plate" href={url.specimen(s.id)}><span class="pl-no">Pl. {ROMAN[i]}</span><Plate specimen={s} /><span class="pl-name">{s.data.name}</span><span class="pl-meta">L{s.data.level} · {LEVELS[s.data.level].name}</span></a>
+  ))}
+</section>
+<p class="d-note">Forms are generated from each specimen's scores: spine length follows the five axes, rings count the level.</p>

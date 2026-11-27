@@ -1,0 +1,52 @@
+---
+// Document shell shared by all themes. Chrome (header, footer, fonts, tokens) comes from the
+// active theme via the @theme alias set in astro.config.mjs.
+import '../styles/base.css';
+import '../styles/structure.css';
+import Shell from '@theme/Shell.astro';
+import { theme } from '@theme/config';
+import Search from '../components/Search.astro';
+interface Crumb { href?: string; label: string }
+interface Props { title: string; description?: string; section?: 'blueprint' | 'ecosystem' | 'technology' | 'about' | 'home'; crumbs?: Crumb[]; wide?: boolean }
+const { title, description = 'A reference on how autonomous AI agents survive without an owner: the blueprint, the ecosystem and the technology.', section, crumbs = [] } = Astro.props;
+const full = title === 'Sovereign Agents' ? title : `${title} · Sovereign Agents`;
+// Both modes render the same content; the organism page is canonical.
+// exe.dev builds set DEPLOY_ENV=preview: they are marked as a preview and kept out of search engines.
+const preview = process.env.DEPLOY_ENV === 'preview';
+const canonical = new URL(Astro.url.pathname.replace(/^\/nerd(?=\/|$)/, '') || '/', Astro.site);
+---
+<!doctype html>
+<html lang="en" data-theme={theme.id}>
+<head>
+  <meta charset="utf-8" />
+  <script is:inline>
+    // A remembered nerd preference only applies when entering at the root. Any other URL is
+    // honoured as written, so a shared /nerd/ link opens in nerd mode and vice versa.
+    (function () {
+      try {
+        if (location.pathname === '/' && localStorage.getItem('sa-mode') === 'nerd') {
+          document.documentElement.style.visibility = 'hidden';
+          location.replace('/nerd/' + location.search + location.hash);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  {preview && <meta name="robots" content="noindex, nofollow" />}
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{full}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonical} />
+  <meta property="og:title" content={full} />
+  <meta property="og:description" content={description} />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content={theme.color} />
+  <meta name="color-scheme" content="dark" />
+  <link rel="icon" href={theme.favicon} />
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <Shell section={section} crumbs={crumbs}><slot /></Shell>
+  {preview && <a class="preview-badge" href="https://github.com/autonomica-xyz/sovereignagents.ai" title="Development preview on exe.dev. Production is sovereignagents.ai">preview</a>}
+  <Search placeholder={theme.searchPlaceholder} prompt={theme.searchPrompt} />
+</body>
+</html>

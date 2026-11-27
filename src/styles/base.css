@@ -5,16 +5,13 @@ img,svg,canvas{display:block;max-width:100%}
 a{color:inherit}
 button{font:inherit;color:inherit;cursor:pointer}
 .visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
-.table-wrap{overflow-x:auto;margin:1.4em 0}
+.table-wrap{overflow-x:auto;margin:1.4em 0;position:relative}
 .prose table{border-collapse:collapse;width:100%;font-size:.88em}
 .prose th,.prose td{text-align:left;vertical-align:top;padding:.55em .7em;border-bottom:1px solid var(--line)}
 .prose th{font-weight:600}
 .prose img{max-width:100%}
 .prose pre{overflow-x:auto;padding:1em;border-radius:6px}
 .prose code{font-family:var(--mono);font-size:.86em}
-.mermaid-wrap{margin:1.6em 0;overflow-x:auto;padding:1.2em;border:1px solid var(--line);border-radius:8px}
-pre.mermaid{background:none!important;margin:0;display:flex;justify-content:center;font-family:var(--sans)}
-pre.mermaid:not([data-processed]){color:transparent;min-height:120px}
 .prose h2,.prose h3,.prose h4{scroll-margin-top:90px}
 /* search overlay (themed by --sx-* vars) */
 .sx{position:fixed;inset:0;z-index:100;display:none}

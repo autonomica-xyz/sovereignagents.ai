@@ -1,0 +1,78 @@
+---
+import { render } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import Maturity from '../../../components/Maturity.astro';
+import Level from '../../../components/Level.astro';
+import Sources from '../../../components/Sources.astro';
+import OrganFigure from '@theme/OrganFigure.astro';
+import { load, url, AXIS_LABEL, fmtDate } from '../../../lib/site';
+export async function getStaticPaths() {
+  const { organs } = await load();
+  return organs.map((o) => ({ params: { organ: o.id } }));
+}
+const { organ: id } = Astro.params;
+const { organs, organ, tech, specimens, developments } = await load();
+const o = organ[id!];
+const { Content } = await render(o);
+const d = o.data;
+const techIds = d.technologies.map((t) => t.id);
+const users = specimens.filter((s) => s.data.technologies.some((t) => techIds.includes(t.id)));
+const devs = developments.filter((x) => x.data.organs.some((r) => r.id === id)).slice(0, 4);
+const i = organs.findIndex((x) => x.id === id);
+const prev = organs[i - 1], next = organs[i + 1];
+---
+<Base title={d.title} section="blueprint" description={d.role} crumbs={[{ href: '/', label: 'Home' }, { href: '/blueprint/', label: 'Blueprint' }, { href: '/blueprint/anatomy/', label: 'Anatomy' }, { label: d.title }]}>
+  <div class="wrap">
+    <header class="phead">
+      <p class="kicker">Organ {String(d.order).padStart(2, '0')} of {organs.length}</p>
+      <h1>{d.title}</h1>
+      <p class="lede">{d.role}</p>
+      <div class="meta-row"><span>Axes: <b>{d.axes.map((a) => AXIS_LABEL[a]).join(', ')}</b></span><span>Last verified <b>{fmtDate(d.verified)}</b></span></div>
+    </header>
+    <div class="cols">
+      <article>
+        <OrganFigure organ={o} organs={organs} />
+        <h2 style="margin-top:0">What it must do</h2>
+        <ul class="must">{d.must.map((m) => <li>{m}</li>)}</ul>
+        <div class="threat"><h2>Threat</h2><p>{d.threat}</p></div>
+        <h2>Best current options</h2>
+        <div class="table-scroll">
+          <table class="options">
+            <thead><tr><th>Option</th><th>Maturity</th><th>Assessment</th></tr></thead>
+            <tbody>
+              {d.options.map((op) => (
+                <tr>
+                  <td>{op.technology ? <a href={url.tech(op.technology.id)}>{op.name}</a> : op.name}</td>
+                  <td><Maturity value={op.maturity} /></td>
+                  <td>{op.note}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div class="unsolved-box"><h2>Unsolved</h2><p>{d.unsolved}</p></div>
+        <h2>Discussion</h2>
+        <div class="prose"><Content /></div>
+        <Sources sources={d.sources} verified={d.verified} />
+        <nav class="meta-row" aria-label="Organs" style="justify-content:space-between;margin-top:2.4rem">
+          {prev ? <a href={url.organ(prev.id)}>← {prev.data.title}</a> : <span></span>}
+          {next ? <a href={url.organ(next.id)}>{next.data.title} →</a> : <a href="/blueprint/anatomy/">All organs →</a>}
+        </nav>
+      </article>
+      <aside class="side">
+        <div class="box">
+          <h2>Technologies</h2>
+          <ul>{techIds.map((t) => <li><a href={url.tech(t)}>{tech[t].data.title}</a></li>)}</ul>
+          {users.length > 0 && <>
+            <h2 style="margin-top:1.6rem">Tracked systems using them</h2>
+            <ul>{users.map((s) => <li style="display:flex;justify-content:space-between;gap:.6rem"><a href={url.specimen(s.id)}>{s.data.name}</a><Level n={s.data.level} /></li>)}</ul>
+          </>}
+          {devs.length > 0 && <>
+            <h2 style="margin-top:1.6rem">Developments</h2>
+            <ul>{devs.map((x) => <li><span class="muted">{fmtDate(x.data.date)}</span><br /><a href={`/ecosystem/developments/#${x.id}`}>{x.data.title}</a></li>)}</ul>
+          </>}
+        </div>
+      </aside>
+    </div>
+  </div>
+</Base>

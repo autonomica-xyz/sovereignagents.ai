@@ -1,0 +1,25 @@
+---
+import Base from '../../layouts/Base.astro';
+import Maturity from '../../components/Maturity.astro';
+import { load, url } from '../../lib/site';
+const { technologies, organ } = await load();
+---
+<Base title="Technology" section="technology" crumbs={[{ href: '/', label: 'Home' }, { label: 'Technology' }]} description="The components a sovereign agent is built from, with maturity assessments and failure modes.">
+  <div class="wrap">
+    <header class="phead">
+      <p class="kicker">Technology</p>
+      <h1>What is available</h1>
+      <p class="lede">The components an organism can be built from today. Each explainer states what the technology does for the organism, the record of where it has worked or failed, and a maturity assessment.</p>
+      <div class="meta-row"><span>Maturity scale: <b>Research</b> → <b>Experimental</b> → <b>Early deployment</b> → <b>Production</b></span></div>
+    </header>
+    <ul class="tech-list" style="margin:2rem 0 4rem">
+      {technologies.map((t) => (
+        <li>
+          <div><h3><a href={url.tech(t.id)}>{t.data.title}</a></h3><p class="organs-of">Serves: {t.data.organs.map((o, i) => <>{i > 0 && ', '}<a href={url.organ(o.id)}>{organ[o.id].data.title}</a></>)}</p></div>
+          <p>{t.data.summary}</p>
+          <div><Maturity value={t.data.maturity} /></div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</Base>

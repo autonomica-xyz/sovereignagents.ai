@@ -1,0 +1,17 @@
+---
+// Horizontal L0–L5 ladder with the number of tracked systems at each level.
+import { LEVELS } from '../lib/site';
+interface Props { counts: number[]; compact?: boolean }
+const { counts, compact = false } = Astro.props;
+const max = Math.max(...counts, 1);
+---
+<ol class:list={['ladder', compact && 'ladder-compact']} aria-label="Tracked systems by sovereignty level">
+  {LEVELS.map((l) => (
+    <li data-l={l.n} class:list={[counts[l.n] === 0 && 'empty']}>
+      <div class="ladder-bar"><span style={`--h:${counts[l.n] / max}`}></span></div>
+      <div class="ladder-n">{counts[l.n] || '—'}</div>
+      <div class="ladder-l"><b>L{l.n}</b> {l.name}</div>
+      {!compact && <p>{l.short}</p>}
+    </li>
+  ))}
+</ol>

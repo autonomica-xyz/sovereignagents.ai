@@ -1,93 +1,88 @@
-# sovereignagents.ai — knowledge-base site
+# sovereignagents.ai
 
-The public face of the [sovereign-agents-research](https://github.com/autonomica-xyz/sovereign-agents-research)
-wiki: the latest developments in sovereign agents (digital organisms that no third party can
-read, stop, steer or seize) and an easy way to explore everything the research has gathered.
+A reference on sovereign agents: software that holds its own keys, pays for its own compute and runs where no single party can read or stop it. The site has three pillars:
 
-This repo currently holds **three medium-fidelity design proposals** side by side, built from the
-same live content:
+- **Blueprint**: the nine organs an organism needs (`/blueprint/anatomy/`), the L0–L5 levels and five axes (`/blueprint/framework/`), and a reference build path (`/blueprint/build-path/`).
+- **Ecosystem**: the tracker of existing attempts with levels and per-axis ratings (`/ecosystem/tracker/`), the methodology, builders, and a dated log of developments.
+- **Technology**: sourced explainers with maturity assessments (`/technology/`).
 
-| Route | Proposal | Idea |
+Organs link to technologies, technologies to the tracked systems and builders using them, and developments to all three.
+
+## Modes
+
+The site has two modes over the same content and routes:
+
+- **Organism** (default, at `/`): a bioluminescent field guide. The agent is drawn as an SVG cell whose nine organelles are the organs; each tracked system is a specimen plate generated from its scores.
+- **Nerd** (at `/nerd/`): a terminal. Boot log, a clickable ASCII organism, `tail -f` of developments and grep-style search.
+
+The `organism / nerd` switch in the header (or Shift+N) opens the same page in the other mode and remembers the choice in `localStorage`. The remembered choice only applies when someone enters at `/`: an inline script in `<head>` sends them to `/nerd/` before the page paints. Every other URL is honoured as written, so a shared `/nerd/…` link always opens in nerd mode.
+
+The output is fully static and needs no server rules. Old v3 preview paths are static redirect pages (meta refresh plus script, with a canonical link): `/a/*` and `/d/*` go to `/*`, and `/c/*` goes to `/nerd/*`. A single root `404.html` sends unknown `/a/`, `/c/` or `/d/` paths to their new home and shows the nerd 404 for missing pages under `/nerd/`.
+
+Pages in `src/pages/` and components in `src/components/` are shared. Each mode lives in `src/themes/<mode>/` and supplies `config.ts`, `Shell.astro` (header and footer), `Home.astro`, four figure components (`AnatomyFigure`, `OrganFigure`, `TrackerFigure`, `SpecimenFigure`) and `theme.css`, which sets the design tokens used by `src/styles/structure.css`. The build resolves `@theme` to the chosen mode; nerd pages get their internal links prefixed with `/nerd`.
+
+## Content
+
+All content is editor-owned and lives in `content/`. It is a distillation of the research notebook ([sovereign-agents-research](https://github.com/autonomica-xyz/sovereign-agents-research)), not a mirror of it: only claims that have been checked against sources are included.
+
+| Path | Collection | One entry is |
 |---|---|---|
-| `/` | Chooser | Thumbnails and a two-line pitch for each direction |
-| `/proposal-a` | **Field Journal** | Editorial/longform: a masthead, dated dispatches from each research pass, "The Wire" of wiki changes, the L0–L5 ladder, departments, drop-cap articles with margin TOC and "cited by" backlinks |
-| `/proposal-b` | **Atlas** | Full-screen force graph of the wiki (every entry a node, every link an edge), an organism-anatomy explorer that maps building blocks to organs (brain, membrane, keys, metabolism, body, nervous system, memory, germline, immune system), signals feed, articles with a local ego-graph |
-| `/proposal-c` | **Specimen Catalog** | Living dashboard: tracked agents as specimens with sovereignty level, five-axis radar (privacy, custody, funding, continuity, independence) and a pulse, filters, habitats (compute) and pathogens (attacks), a sortable full index, data-sheet articles |
+| `content/organs/*.md` | `organs` | An organ: what it must do, threat, options with maturity, the unsolved part, axes |
+| `content/technologies/*.md` | `technologies` | A technology explainer with components, verdict and maturity |
+| `content/specimens/*.md` | `specimens` | A tracked system: level, five ratings with notes, status with evidence |
+| `content/developments.yaml` | `developments` | A dated, sourced development |
+| `content/builders.yaml` | `builders` | An organisation, lab, project or protocol |
+| `content/pages/*.md` | `pages` | Framework, methodology, about, build path |
 
-Every proposal has a home page, a latest-developments feed, browsing by category, article pages
-with backlinks and rendered Mermaid diagrams, and instant client-side search (press `/` or ⌘K).
+The schema is in `src/content.config.ts`. Every entry needs `sources` and a `verified` or `assessed` date, and cross-references (organ ↔ technology ↔ specimen) are typed, so a missing field, a misspelt slug or a broken reference fails the build. Body text uses footnotes (`[^1]`) for citations.
 
-## How content gets in
+### Editorial rules
 
-Content is **not** copied into this repo. At build time `scripts/sync-content.mjs` clones (or
-fast-forwards) the research repo into `content-src/` and writes `content-src/.site-meta.json` with
-the last 120 commits, which feed the "latest developments" views.
+- Every factual claim links to a source; prefer primary sources.
+- Label figures that come only from the project itself as self-reported.
+- Leave out claims that cannot be confirmed.
+- Status is `unknown` unless there is evidence; see `/ecosystem/methodology/`.
+- Update the `verified` / `assessed` date when an entry is re-checked.
 
-`src/lib/wiki.ts` then reads:
+## Develop
 
-- `wiki/pages/*.md`: atomic entries (frontmatter `category`, `status`, `updated`; first `>`
-  blockquote is the summary). Pages without a category are treated as hubs.
-- `docs/*.md`: long reads.
-- `wiki/log/*.md`: dated research dispatches.
-- `wiki/pages/timeline.md`, `organism-comparison-matrix.md`: lineage and specimen data.
-- `wiki/open-questions.md`, `INDEX.md`, `SCHEMA.md`, `sources.md`.
+Requires Node 22.23.4 or later.
 
-Relative `.md` links and `[[wikilinks]]` become site routes; backlinks are computed from them.
-` ```mermaid ` blocks render client-side. The graph layout (`/graph.json`) and search index
-(`/search-index.json`) are generated at build. New wiki pages show up on the next build with no
-code change.
-
-Environment overrides: `CONTENT_REPO`, `CONTENT_REF` (default `main`), `CONTENT_DIR` (use an
-existing local checkout).
-
-The organ map lives in `src/lib/organism.ts`. Specimen radar readings are derived mechanically from
-the comparison-matrix columns (none / partial / strong), so the site never invents scores the wiki
-doesn't contain.
-
-## Build locally
-
-Requires Node ≥ 22.23.4.
-
-```bash
+```sh
 npm ci
-npm run build      # sync content + astro build -> dist/
-npm run preview    # serve dist/ on :4321
-npm run dev        # dev server (run `npm run content` once first)
+npm run dev             # organism mode at http://localhost:4321/
+MODE=nerd npm run dev   # nerd mode at http://localhost:4321/nerd/
+npm run build           # both modes into dist/ (nerd in dist/nerd/)
+npm run check           # every internal link and #anchor in dist/
 ```
 
-## Deploy to exe.dev
+## Deploy
 
-`deploy/deploy-exe.py` uses the exe.dev HTTPS API (no SSH needed). It uploads the source as a
-tarball, then `deploy/vm-setup.sh` on the VM installs Node, builds from the live wiki, serves the
-result with nginx on port 8000 and installs a systemd timer (`sa-refresh.timer`) that pulls the wiki
-and rebuilds **every 30 minutes**. Each build goes into `releases/<timestamp>` and `current` is
-swapped atomically, so a failed build never takes the site down.
+| Environment | Where | Deploys from | How |
+|---|---|---|---|
+| Production | GitHub Pages, https://sovereignagents.ai | `main` | `.github/workflows/pages.yml` on every push to `main`, or run it by hand (workflow_dispatch) |
+| Development | exe.dev preview, https://sovereignagents.exe.xyz | any branch | `deploy/deploy-exe.py` |
 
-```bash
-# token: either a pre-minted one whose cmds include "ssh <vm>", "share port", "share set-public"…
-export EXE_TOKEN=exe0....
-# …or a local signer script that prints a token for a permissions JSON
-# (see https://exe.dev/docs/https-api-local-key)
-export EXE_TOKEN_SIGNER=/path/to/exe-token.py
+Both run the same `npm run build`. Canonical URLs always point at https://sovereignagents.ai. Preview builds (`DEPLOY_ENV=preview`, set by `deploy/rebuild.sh`) add a "preview" badge and `noindex`, write a `robots.txt` that disallows crawling, and drop the `CNAME` file. Production builds never do any of these.
 
-python3 deploy/deploy-exe.py --vm sovereignagents --create --public   # first time
-python3 deploy/deploy-exe.py --vm sovereignagents                     # ship code changes
-python3 deploy/deploy-exe.py --vm sovereignagents --rebuild-only      # pull wiki + rebuild now
+### Production: GitHub Pages
+
+The repository's Pages source is GitHub Actions. The workflow (`.github/workflows/pages.yml`; until it is installed there, its content is in `deploy/github-pages-workflow.yml`) builds the site, checks every internal link, and publishes `dist/` with `actions/upload-pages-artifact` and `actions/deploy-pages`.
+
+The build assumes it is served from the root of a domain (`base: '/'`), which is right for the custom domain `sovereignagents.ai` (`public/CNAME`). The default project URL, `autonomica-xyz.github.io/sovereignagents.ai/`, serves the site under `/sovereignagents.ai/` instead, so root-relative links and assets would break there. Use the custom domain. If the project URL is ever needed before DNS is set up, the build would need `base: '/sovereignagents.ai'` and a matching prefix for internal links.
+
+With an Actions workflow, GitHub ignores the `CNAME` file. The custom domain is set in the repository's Settings → Pages. The file is kept as a record of the intended domain.
+
+### Development: exe.dev preview
+
+The preview runs on an exe.dev VM (`sovereignagents`) behind nginx and can be deployed from any branch:
+
+```sh
+EXE_TOKEN_SIGNER=/path/to/exe-token.py python3 deploy/deploy-exe.py --vm sovereignagents --public
 ```
 
-The preview lives at <https://sovereignagents.exe.xyz/>.
+`deploy/deploy-exe.py` uploads the checked-out source, `deploy/vm-setup.sh` installs Node and nginx, and `deploy/rebuild.sh` builds a preview into a new release directory, checks links, and switches the live symlink atomically. nginx only serves files and the root `404.html`, like Pages, so the preview behaves the same as production.
 
-## Layout
+## Licence
 
-```
-scripts/sync-content.mjs   pull the wiki + commit history
-src/lib/wiki.ts            markdown loader, link rewriting, backlinks, feeds
-src/lib/organism.ts        anatomy (organs → pages), levels, specimens
-src/lib/graph.ts           build-time force layout -> /graph.json
-src/components/            Search, Mermaid, Anatomy, Vitals, SpecCard, IndexTable
-src/layouts/               JournalLayout (A), AtlasLayout (B), CatalogLayout (C)
-src/pages/proposal-{a,b,c} home, feed, browse, browse/[cat], wiki/[slug] (+ B anatomy, C specimens)
-deploy/                    exe.dev deploy, VM setup, rebuild
-```
-
-Site code: MIT. Content: CC-BY-4.0, from the research repo.
+MIT

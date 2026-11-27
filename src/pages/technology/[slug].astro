@@ -1,0 +1,56 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Maturity from '../../components/Maturity.astro';
+import Level from '../../components/Level.astro';
+import Sources from '../../components/Sources.astro';
+import { load, url, fmtDate } from '../../lib/site';
+export async function getStaticPaths() {
+  const { technologies } = await load();
+  return technologies.map((t) => ({ params: { slug: t.id } }));
+}
+const { slug } = Astro.params;
+const { tech, organ, technologies, specimens, builders, developments } = await load();
+const t = tech[slug!];
+const d = t.data;
+const { Content } = await render(t);
+const users = specimens.filter((s) => s.data.technologies.some((x) => x.id === slug));
+const makers = builders.filter((b) => b.data.technologies.some((x) => x.id === slug));
+const devs = developments.filter((x) => x.data.technologies.some((r) => r.id === slug));
+const i = technologies.findIndex((x) => x.id === slug);
+const next = technologies[i + 1];
+---
+<Base title={d.title} section="technology" description={d.summary} crumbs={[{ href: '/', label: 'Home' }, { href: '/technology/', label: 'Technology' }, { label: d.title }]}>
+  <div class="wrap">
+    <header class="phead">
+      <p class="kicker">Technology</p>
+      <h1>{d.title}</h1>
+      <p class="lede">{d.summary}</p>
+      <div class="meta-row"><span><Maturity value={d.maturity} /></span><span>Last verified <b>{fmtDate(d.verified)}</b></span></div>
+    </header>
+    <div class="cols">
+      <article>
+        <p class="verdict"><span class="tag" style="display:block;margin-bottom:.2rem">Assessment</span>{d.verdict}</p>
+        <h2>Components</h2>
+        <div class="table-scroll">
+          <table class="comp">
+            <thead><tr><th>Component</th><th>What it does</th><th>Maturity</th></tr></thead>
+            <tbody>{d.components.map((c) => <tr><td>{c.url ? <a href={c.url} rel="noopener">{c.name}</a> : c.name}</td><td>{c.what}</td><td><Maturity value={c.maturity} /></td></tr>)}</tbody>
+          </table>
+        </div>
+        <div class="prose"><Content /></div>
+        <Sources sources={d.sources} verified={d.verified} />
+        {next && <p class="meta-row" style="margin-top:2.4rem">Next: <a href={url.tech(next.id)}>{next.data.title} →</a></p>}
+      </article>
+      <aside class="side">
+        <div class="box">
+          <h2>Organs served</h2>
+          <ul>{d.organs.map((o) => <li><a href={url.organ(o.id)}>{organ[o.id].data.title}</a> <span class="muted">· {organ[o.id].data.role.split('.')[0]}</span></li>)}</ul>
+          {users.length > 0 && <><h2 style="margin-top:1.6rem">Used by tracked systems</h2><ul>{users.map((s) => <li style="display:flex;justify-content:space-between;gap:.6rem"><a href={url.specimen(s.id)}>{s.data.name}</a><Level n={s.data.level} /></li>)}</ul></>}
+          {makers.length > 0 && <><h2 style="margin-top:1.6rem">Builders</h2><ul>{makers.map((b) => <li><a href={`/ecosystem/builders/#${b.id}`}>{b.data.name}</a></li>)}</ul></>}
+          {devs.length > 0 && <><h2 style="margin-top:1.6rem">Developments</h2><ul>{devs.map((x) => <li><span class="muted">{fmtDate(x.data.date)}</span><br /><a href={`/ecosystem/developments/#${x.id}`}>{x.data.title}</a></li>)}</ul></>}
+        </div>
+      </aside>
+    </div>
+  </div>
+</Base>

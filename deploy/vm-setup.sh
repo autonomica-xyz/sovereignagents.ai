@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# One-time (idempotent) setup on an exe.dev VM: Node, deps, first build, nginx on :8000, refresh timer.
+# Idempotent setup on an exe.dev VM: Node, deps, build, nginx on :8000. No scheduled rebuilds.
 set -euo pipefail
 trap 'echo "[setup] failed at line $LINENO"' ERR
 APP="${APP:-/home/exedev/sovereignagents-site}"
@@ -18,33 +18,22 @@ server {
   listen 8000 default_server;
   root $APP/current;
   index index.html;
+  absolute_redirect off;
   gzip on; gzip_types text/css application/javascript application/json image/svg+xml; gzip_min_length 1024;
-  location /_astro/ { expires 30d; add_header Cache-Control "public, immutable"; }
-  location / { try_files \$uri \$uri/index.html \$uri/ =404; add_header Cache-Control "public, max-age=300"; }
+  location ^~ /_astro/ { expires 30d; add_header Cache-Control "public, immutable"; }
+  location ^~ /nerd/_astro/ { expires 30d; add_header Cache-Control "public, immutable"; }
+  location / { try_files \$uri \$uri/ =404; add_header Cache-Control "public, max-age=300"; }
   error_page 404 /404.html;
 }
 NGINX
 sudo ln -sf /etc/nginx/sites-available/sovereignagents /etc/nginx/sites-enabled/sovereignagents
 sudo rm -f /etc/nginx/sites-enabled/default
 sudo nginx -t && (sudo systemctl enable --now nginx && sudo systemctl reload nginx)
-sudo tee /etc/systemd/system/sa-refresh.service >/dev/null <<UNIT
-[Unit]
-Description=Rebuild sovereignagents site from the latest wiki
-[Service]
-Type=oneshot
-User=exedev
-Environment=PATH=/usr/local/bin:/usr/bin:/bin
-ExecStart=/bin/bash $APP/deploy/rebuild.sh
-UNIT
-sudo tee /etc/systemd/system/sa-refresh.timer >/dev/null <<UNIT
-[Unit]
-Description=Refresh sovereignagents site every 30 minutes
-[Timer]
-OnBootSec=2min
-OnUnitActiveSec=30min
-Persistent=true
-[Install]
-WantedBy=timers.target
-UNIT
-sudo systemctl daemon-reload && sudo systemctl enable --now sa-refresh.timer
+# v2: content changes go through commits, so remove the old 30-minute rebuild timer if present.
+if systemctl list-unit-files sa-refresh.timer >/dev/null 2>&1 && [[ -e /etc/systemd/system/sa-refresh.timer ]]; then
+  sudo systemctl disable --now sa-refresh.timer || true
+fi
+sudo rm -f /etc/systemd/system/sa-refresh.timer /etc/systemd/system/sa-refresh.service
+sudo systemctl daemon-reload
+rm -rf "$APP/content-src"
 echo "[setup] done"

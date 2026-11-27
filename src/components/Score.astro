@@ -1,0 +1,9 @@
+---
+import { SCORE_LABEL } from '../lib/site';
+interface Props { score: number; label?: boolean }
+const { score, label = false } = Astro.props;
+---
+<span class="score" data-s={score} title={`${score} of 3: ${SCORE_LABEL[score]}`}>
+  <span class="score-dots" aria-hidden="true">{[1, 2, 3].map((k) => <i class:list={[k <= score && 'on']}></i>)}</span>
+  {label ? <span class="score-l">{SCORE_LABEL[score]}</span> : <span class="visually-hidden">{score} of 3, {SCORE_LABEL[score]}</span>}
+</span>

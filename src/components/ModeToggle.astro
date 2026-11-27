@@ -1,0 +1,32 @@
+---
+// Switches the current page between organism mode (root) and nerd mode (/nerd/).
+// It is a real link, so it works without JavaScript; with JavaScript the choice is remembered
+// and the inline script in Base.astro applies it before the page paints.
+import { theme } from '@theme/config';
+interface Props { class?: string }
+const nerd = theme.id === 'nerd';
+const here = Astro.url.pathname.replace(/^\/nerd(?=\/|$)/, '') || '/';
+const rel = /^\/404(\.html)?\/?$/.test(here) ? '/' : here;
+const target = nerd ? rel : `/nerd${rel}`;
+---
+<a data-abs href={target} class:list={['mode-toggle', Astro.props.class]} data-mode-to={nerd ? 'organism' : 'nerd'} aria-label={nerd ? 'Nerd mode is on. Switch to organism mode' : 'Switch to nerd mode'} title="Switch mode (Shift+N)">
+  <span class:list={['mt-opt', !nerd && 'on']}>organism</span><span class="mt-track" aria-hidden="true"><span class="mt-knob"></span></span><span class:list={['mt-opt', nerd && 'on']}>nerd</span>
+</a>
+<script>
+  const KEY = 'sa-mode';
+  const go = (a: HTMLAnchorElement) => {
+    try { localStorage.setItem(KEY, a.dataset.modeTo!); } catch {}
+    const to = new URL(a.href); to.search = location.search; to.hash = location.hash;
+    location.href = to.href;
+  };
+  document.querySelectorAll<HTMLAnchorElement>('a.mode-toggle').forEach((a) => a.addEventListener('click', (e) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+    e.preventDefault(); go(a);
+  }));
+  window.addEventListener('keydown', (e) => {
+    if (e.key !== 'N' || !e.shiftKey || e.metaKey || e.ctrlKey || e.altKey) return;
+    const el = e.target as HTMLElement;
+    if (/INPUT|TEXTAREA|SELECT/.test(el.tagName) || el.isContentEditable || document.querySelector('[data-search].open')) return;
+    const a = document.querySelector<HTMLAnchorElement>('a.mode-toggle'); if (a) go(a);
+  });
+</script>

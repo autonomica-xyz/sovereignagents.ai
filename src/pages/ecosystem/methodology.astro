@@ -1,0 +1,13 @@
+---
+import Doc from '../../components/Doc.astro';
+import { SCORE_LABEL, AXES, AXIS_LABEL, AXIS_Q } from '../../lib/site';
+---
+<Doc id="methodology" kicker="Ecosystem" section="ecosystem" crumbs={[{ href: '/', label: 'Home' }, { href: '/ecosystem/', label: 'Ecosystem' }, { label: 'Methodology' }]}>
+  <div slot="side" class="box">
+    <h2>The five axes</h2>
+    <dl>{AXES.map((a) => <><dt>{AXIS_LABEL[a]}</dt><dd>{AXIS_Q[a]}</dd></>)}</dl>
+    <h2 style="margin-top:1.6rem">Scores</h2>
+    <dl>{SCORE_LABEL.map((l, i) => <><dt>{i}</dt><dd>{l}</dd></>)}</dl>
+    <p class="muted" style="margin-top:1rem">Level definitions: <a href="/blueprint/framework/">framework</a>.</p>
+  </div>
+</Doc>

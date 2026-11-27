@@ -1,0 +1,11 @@
+---
+import { organismHtml } from './Ascii';
+import { url, AXES } from '../../lib/site';
+const { organ, organs } = Astro.props;
+const art = organismHtml(organs.map((o: any) => o.id), organs.map((o: any) => o.data.title), (id) => url.organ(id), organ.id);
+---
+<div class="tbox c-organ-fig">
+  <p class="tbox-t">┤ organ [{organ.data.order}] {organ.id} ├</p>
+  <pre class="organism small" aria-hidden="true">{<Fragment set:html={art} />}</pre>
+  <pre class="c-axes">{AXES.map((a) => <>{organ.data.axes.includes(a) ? <span class="on">[x]</span> : <span class="dim">[ ]</span>}{` ${a}\n`}</>)}</pre>
+</div>

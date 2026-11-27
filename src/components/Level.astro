@@ -1,0 +1,6 @@
+---
+import { LEVELS } from '../lib/site';
+interface Props { n: number; name?: boolean }
+const { n, name = false } = Astro.props;
+---
+<span class="lvl" data-l={n} title={`L${n}: ${LEVELS[n].name}`}><b>L{n}</b>{name && <span>{LEVELS[n].name}</span>}</span>

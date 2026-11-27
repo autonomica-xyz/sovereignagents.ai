@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
-"""Deploy this site to an exe.dev VM over the exe.dev HTTPS API (no SSH needed).
+"""Deploy the development preview to an exe.dev VM over the exe.dev HTTPS API (no SSH needed).
+
+exe.dev is the development environment and can be deployed from any branch. Production is
+GitHub Pages, published from main by .github/workflows/pages.yml. Preview builds are marked
+with a "preview" badge, noindex and a robots.txt that disallows crawling.
 
 Uploads the source (not node_modules/dist) as a tarball, then runs deploy/vm-setup.sh on the VM,
-which installs Node, builds the site from the live wiki, serves it with nginx on :8000 and installs
-a timer that rebuilds every 30 minutes.
+which installs Node, builds organism mode (/) and nerd mode (/nerd/) from the committed content, and
+serves them with nginx on :8000. There is no scheduled rebuild.
 
 Auth (pick one):
   EXE_TOKEN=exe0.…            a token whose cmds include "ssh <vm>"
@@ -11,7 +15,7 @@ Auth (pick one):
                               (see https://exe.dev/docs/https-api-local-key)
 Usage:  python3 deploy/deploy-exe.py [--vm sovereignagents] [--create] [--public] [--rebuild-only]
 """
-import argparse, base64, io, json, os, subprocess, sys, tarfile, time, urllib.request, urllib.error
+import argparse, base64, io, json, os, re, subprocess, sys, tarfile, time, urllib.request, urllib.error
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SKIP = {"node_modules", "dist", "content-src", "releases", "current", ".astro", ".git"}
 
@@ -47,8 +51,10 @@ def main():
     ap.add_argument("--vm", default="sovereignagents")
     ap.add_argument("--create", action="store_true", help="create the VM first")
     ap.add_argument("--public", action="store_true", help="make https://<vm>.exe.xyz public")
-    ap.add_argument("--rebuild-only", action="store_true", help="just pull the wiki and rebuild on the VM")
+    ap.add_argument("--rebuild-only", action="store_true", help="rebuild the uploaded source on the VM")
     a = ap.parse_args()
+    if not re.fullmatch(r"[a-z0-9][a-z0-9-]{0,62}", a.vm):
+        sys.exit(f"invalid VM name: {a.vm!r}")  # it is interpolated into remote commands
     vm, app = a.vm, "/home/exedev/sovereignagents-site"
     tok = token(["new", "share port", "share set-public", "share show", f"ssh {a.vm}"])
     if a.create:
@@ -62,7 +68,7 @@ def main():
     for i, c in enumerate(chunks):
         sh(f"echo {c} {'>' if i == 0 else '>>'} /tmp/site.tgz.b64", 120)
     print(f"uploaded {len(chunks)} chunks")
-    sh(f"mkdir -p {app} && base64 -d /tmp/site.tgz.b64 > /tmp/site.tgz && gzip -t /tmp/site.tgz && tar xzf /tmp/site.tgz -C {app} && rm /tmp/site.tgz && rm /tmp/site.tgz.b64 && (nohup bash {app}/deploy/vm-setup.sh > /tmp/sa-setup.log 2>&1 &)")
+    sh(f"mkdir -p {app} && base64 -d /tmp/site.tgz.b64 > /tmp/site.tgz && gzip -t /tmp/site.tgz && find {app} -mindepth 1 -maxdepth 1 ! -name node_modules ! -name releases ! -name current ! -name .rebuild.lock -exec rm -rf {{}} + && tar xzf /tmp/site.tgz -C {app} && rm /tmp/site.tgz && rm /tmp/site.tgz.b64 && (nohup bash {app}/deploy/vm-setup.sh > /tmp/sa-setup.log 2>&1 &)")
     for _ in range(90):  # poll up to ~15 min
         time.sleep(10)
         log = sh("tail -5 /tmp/sa-setup.log", 60)

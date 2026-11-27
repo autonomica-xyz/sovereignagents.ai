@@ -1,0 +1,67 @@
+---
+import { BANNER, organismHtml, bar, pad } from './Ascii';
+import { url, fmtDate, KIND_LABEL, LEVELS, iso } from '../../lib/site';
+const { organs, technologies, specimens, developments } = Astro.props;
+const top = Math.max(...specimens.map((s: any) => s.data.level));
+const counts = LEVELS.map((l) => specimens.filter((s: any) => s.data.level === l.n).length);
+const max = Math.max(...counts);
+const art = organismHtml(organs.map((o: any) => o.id), organs.map((o: any) => o.data.title), (id) => url.organ(id));
+const boot = [
+  ['OK', `mounted /blueprint (${organs.length} organs, L0–L5, 5 axes)`],
+  ['OK', `indexed ${specimens.length} tracked systems`],
+  ['OK', `rated ${technologies.length} technologies for maturity`],
+  ['OK', `loaded ${developments.length} developments, latest ${fmtDate(developments[0].data.date)}`],
+  ['WARN', `highest level observed: L${top}. no tracked system has reached L${top + 1}`],
+];
+const log = [...developments].slice(0, 8).reverse();
+---
+<section class="wrap c-hero">
+  <pre class="banner" aria-label="Sovereign Agents">{BANNER}</pre>
+  <ol class="boot" aria-label="Status">
+    {boot.map(([k, t], i) => <li style={`--d:${i}`}><span class:list={['st', k === 'WARN' && 'warn']}>[{k === 'OK' ? '  OK  ' : ' WARN '}]</span> {t}</li>)}
+  </ol>
+  <div class="c-readme">
+    <p class="cmd">$ cat README</p>
+    <p class="c-lede">A sovereign agent holds its own keys, pays for its own compute, and runs where no single party can read or stop it. This is the field reference: what such an organism needs, who has tried to build one, and which technologies can supply it today.</p>
+  </div>
+</section>
+
+<section class="wrap c-grid2">
+  <div class="tbox">
+    <p class="tbox-t">┤ anatomy.txt ├</p>
+    <pre class="organism" aria-label="ASCII diagram of the organism; numbered markers link to each organ">{<Fragment set:html={art} />}</pre>
+  </div>
+  <div class="tbox">
+    <p class="tbox-t">┤ organs ├</p>
+    <ol class="legend-c">
+      {organs.map((o: any) => <li><a href={url.organ(o.id)}><span class="k">[{o.data.order}]</span> {o.data.title.toLowerCase()}</a><span class="dim"> {o.data.role.split('.')[0].toLowerCase()}</span></li>)}
+    </ol>
+  </div>
+</section>
+
+<section class="wrap c-section">
+  <p class="cmd">$ ls -l ./</p>
+  <div class="c-dirs">
+    <a class="tbox c-dir" href="/blueprint/"><p class="tbox-t">┤ blueprint/ ├</p><b>what an organism needs</b><span>{organs.length} organs · L0–L5 framework · build path to L3</span><span class="go">cd blueprint ↵</span></a>
+    <a class="tbox c-dir" href="/ecosystem/"><p class="tbox-t">┤ ecosystem/ ├</p><b>who has tried</b><span>{specimens.length} systems scored · {developments.length} developments · builders</span><span class="go">cd ecosystem ↵</span></a>
+    <a class="tbox c-dir" href="/technology/"><p class="tbox-t">┤ technology/ ├</p><b>what is available</b><span>{technologies.length} explainers with maturity ratings</span><span class="go">cd technology ↵</span></a>
+  </div>
+</section>
+
+<section class="wrap c-grid2 c-grid-even">
+  <div>
+    <p class="cmd">$ sa levels --histogram</p>
+    <pre class="hist">{LEVELS.map((l) => <>{`L${l.n} │`}<span class:list={['hb', counts[l.n] === 0 && 'zero']}>{bar(counts[l.n], max, 18)}</span>{` ${String(counts[l.n]).padStart(2)}  `}<span class="dim">{pad(l.name.toLowerCase(), 24)}</span>{l.n === top + 1 ? <span class="warn hist-note"> ← buildable</span> : ''}{'\n'}</>)}</pre>
+    <p class="cmd" style="margin-top:1.6rem">$ sa tracker --top 5</p>
+    <pre class="ttable">{<><span class="dim">{'LVL  SYSTEM                  STATUS    TOTAL\n'}</span>{specimens.slice(0, 5).map((s: any) => <>{`L${s.data.level}   `}<a href={url.specimen(s.id)}>{pad(s.data.name, 22)}</a>{`  ${pad(s.data.status, 8)}  ${Object.values(s.data.ratings).reduce((a: number, r: any) => a + r.score, 0)}/15\n`}</>)}</>}</pre>
+    <p><a class="c-more" href="/ecosystem/tracker/">→ full tracker</a></p>
+  </div>
+  <div>
+    <p class="cmd">$ tail -f developments.log</p>
+    <ol class="tail">
+      {log.map((d: any, i: number) => <li style={`--d:${i}`}><span class="ts">{d.data.date.length === 7 ? `${d.data.date}-··` : d.data.date}</span> <span class:list={['lvl-tag', d.data.kind]}>{({ organism: 'ORG', attack: 'ATK', infrastructure: 'INF', research: 'RES', market: 'MKT' } as Record<string, string>)[d.data.kind]}</span> <a href={`/ecosystem/developments/#${d.id}`}>{d.data.title}</a></li>)}
+      <li class="tail-cur" style={`--d:${log.length}`}><span class="cursor"></span></li>
+    </ol>
+    <p><a class="c-more" href="/ecosystem/developments/">→ full log</a></p>
+  </div>
+</section>

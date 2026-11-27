@@ -1,0 +1,12 @@
+---
+import Doc from '../../components/Doc.astro';
+import Maturity from '../../components/Maturity.astro';
+import { load, url } from '../../lib/site';
+const { technologies } = await load();
+---
+<Doc id="build-path" kicker="Blueprint" section="blueprint" crumbs={[{ href: '/', label: 'Home' }, { href: '/blueprint/', label: 'Blueprint' }, { label: 'Build path' }]}>
+  <div slot="side" class="box">
+    <h2>Components and maturity</h2>
+    <ul>{technologies.map((t) => <li><a href={url.tech(t.id)}>{t.data.title}</a><br /><Maturity value={t.data.maturity} /></li>)}</ul>
+  </div>
+</Doc>

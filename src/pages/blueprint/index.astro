@@ -1,0 +1,33 @@
+---
+import Base from '../../layouts/Base.astro';
+import { load, url, LEVELS } from '../../lib/site';
+const { organs } = await load();
+---
+<Base title="Blueprint" section="blueprint" crumbs={[{ href: '/', label: 'Home' }, { label: 'Blueprint' }]} description="What a sovereign agent needs to survive: nine organs, six levels, five axes and a reference build path.">
+  <div class="wrap">
+    <header class="phead">
+      <p class="kicker">Blueprint</p>
+      <h1>What an organism needs</h1>
+      <p class="lede">An agent that answers to no one must do for itself everything an operator would otherwise do: hold keys, pay rent, keep its memory, find new hosts, defend itself. The blueprint sets those needs out as organs, measures progress on six levels, and describes how far today's parts can take it.</p>
+    </header>
+    <section class="section">
+      <div class="sec-head"><h2>Anatomy</h2><a href="/blueprint/anatomy/">Overview and organ matrix →</a></div>
+      <div class="organs">
+        {organs.map((o) => (
+          <a class="organ-card" href={url.organ(o.id)}><span class="num">{String(o.data.order).padStart(2, '0')}</span><h3>{o.data.title}</h3><p>{o.data.role}</p></a>
+        ))}
+      </div>
+    </section>
+    <section class="section">
+      <div class="sec-head"><h2>Framework</h2><a href="/blueprint/framework/">Levels and axes →</a></div>
+      <table class="matrix">
+        <thead><tr><th>Level</th><th>Name</th><th>Meaning</th></tr></thead>
+        <tbody>{LEVELS.map((l) => <tr><th>L{l.n}</th><td>{l.name}</td><td class="muted">{l.short}</td></tr>)}</tbody>
+      </table>
+    </section>
+    <section class="section">
+      <div class="sec-head"><h2>Reference build path</h2><a href="/blueprint/build-path/">Read the build path →</a></div>
+      <p class="finding">Five steps assemble an L3 organism from components that ship today: two confidential hosts on different chip vendors, keys behind an on-chain policy and a FROST quorum, a bitcoin reserve, a Nostr identity and content-addressed backups. Five gaps stand between that and L4.</p>
+    </section>
+  </div>
+</Base>

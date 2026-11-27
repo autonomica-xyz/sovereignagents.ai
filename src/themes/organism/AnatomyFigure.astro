@@ -1,0 +1,10 @@
+---
+import Organism from './Organism.astro';
+import Legend from './Legend.astro';
+const { organs } = Astro.props;
+---
+<figure class="d-fig d-fig-page">
+  <Organism organs={organs} idp="anat" />
+  <figcaption><span class="fig">Fig. 1</span> The organism as a single cell. Each organelle is an organ; select one to read its account.</figcaption>
+  <Legend organs={organs} />
+</figure>

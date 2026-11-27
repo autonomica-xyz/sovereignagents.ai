@@ -1,13 +1,13 @@
 ---
 // Client-side full-text search over a prebuilt index (MiniSearch). Opens with "/" or Ctrl/Cmd-K.
-interface Props { base: string; placeholder?: string }
-const { base, placeholder = 'Search the knowledge base' } = Astro.props;
+interface Props { placeholder?: string; prompt?: string }
+const { placeholder = 'Search organs, technologies, projects and developments', prompt } = Astro.props;
 ---
-<div class="sx" data-search data-base={base}>
+<div class="sx" data-search>
   <div class="sx-backdrop" data-close></div>
   <div class="sx-panel" role="dialog" aria-modal="true" aria-label="Search">
     <div class="sx-bar">
-      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      {prompt ? <span class="sx-prompt" aria-hidden="true">{prompt}</span> : <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>}
       <input type="search" placeholder={placeholder} autocomplete="off" spellcheck="false" aria-label="Search query" />
       <kbd data-close>esc</kbd>
     </div>
@@ -17,25 +17,25 @@ const { base, placeholder = 'Search the knowledge base' } = Astro.props;
 </div>
 <script>
   import MiniSearch from 'minisearch';
-  type Doc = { id: string; t: string; c: string; cl: string; s: string; h: string; x: string };
+  type Doc = { id: string; u: string; t: string; cl: string; s: string; x: string };
   const root = document.querySelector<HTMLElement>('[data-search]')!;
-  const base = root.dataset.base!;
   const input = root.querySelector('input')!;
   const list = root.querySelector('.sx-results')!;
   const count = root.querySelector('[data-count]')!;
   let ms: MiniSearch<Doc> | null = null; let sel = 0; let hits: any[] = [];
   async function load() {
     if (ms) return ms;
-    const docs: Doc[] = await (await fetch('/search-index.json')).json();
-    ms = new MiniSearch<Doc>({ fields: ['t', 'h', 's', 'x', 'cl'], storeFields: ['t', 'c', 'cl', 's'], searchOptions: { boost: { t: 4, h: 2, s: 1.5, cl: 1 }, prefix: true, fuzzy: 0.15 } });
+    const docs: Doc[] = await (await fetch(`${import.meta.env.BASE_URL.replace(/\/$/, '')}/search-index.json`)).json();
+    ms = new MiniSearch<Doc>({ fields: ['t', 's', 'x', 'cl'], storeFields: ['u', 't', 'cl', 's'], searchOptions: { boost: { t: 4, s: 2, cl: 1 }, prefix: true, fuzzy: 0.15 } });
     ms.addAll(docs);
-    count.textContent = `${docs.length} articles indexed`;
+    count.textContent = `${docs.length} entries indexed`;
     return ms;
   }
   const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]!));
+  const safe = (u: string) => (u.startsWith('/') && !u.startsWith('//') ? u : '/');
   function mark(s: string, terms: string[]) { let out = esc(s); for (const t of terms) if (t.length > 1) out = out.replace(new RegExp(`(${t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'), '<mark>$1</mark>'); return out; }
   function draw() {
-    list.innerHTML = hits.map((h, i) => `<li class="${i === sel ? 'on' : ''}"><a href="${base}/wiki/${encodeURIComponent(h.id)}"><span class="sx-cat" data-cat="${esc(h.c)}">${esc(h.cl)}</span><strong>${mark(h.t, h.terms)}</strong><span class="sx-sum">${mark(h.s, h.terms)}</span></a></li>`).join('');
+    list.innerHTML = hits.map((h, i) => `<li class="${i === sel ? 'on' : ''}"><a href="${esc(safe(h.u))}"><span class="sx-cat">${esc(h.cl)}</span><strong>${mark(h.t, h.terms)}</strong><span class="sx-sum">${mark(h.s, h.terms)}</span></a></li>`).join('');
     list.querySelector('.on')?.scrollIntoView({ block: 'nearest' });
   }
   async function run() {
@@ -46,7 +46,7 @@ const { base, placeholder = 'Search the knowledge base' } = Astro.props;
   }
   let opener: Element | null = null;
   function open() { opener = document.activeElement; root.classList.add('open'); input.focus(); load(); }
-  function close() { root.classList.remove('open'); (opener as HTMLElement | null)?.focus?.(); }
+  function close() { root.classList.remove('open'); input.blur(); (opener as HTMLElement | null)?.focus?.(); }
   input.addEventListener('input', run);
   root.querySelectorAll('[data-close]').forEach((el) => el.addEventListener('click', close));
   document.querySelectorAll('[data-open-search]').forEach((el) => el.addEventListener('click', (e) => { e.preventDefault(); open(); }));
@@ -57,7 +57,7 @@ const { base, placeholder = 'Search the knowledge base' } = Astro.props;
     if (e.key === 'Escape') close();
     if (e.key === 'ArrowDown') { sel = Math.min(sel + 1, hits.length - 1); draw(); e.preventDefault(); }
     if (e.key === 'ArrowUp') { sel = Math.max(sel - 1, 0); draw(); e.preventDefault(); }
-    if (e.key === 'Enter' && hits[sel]) location.href = `${base}/wiki/${encodeURIComponent(hits[sel].id)}`;
+    if (e.key === 'Enter' && hits[sel]) location.href = safe(hits[sel].u);
     if (e.key === 'Tab') { e.preventDefault(); input.focus(); }
   });
   const qp = new URLSearchParams(location.search).get('q');

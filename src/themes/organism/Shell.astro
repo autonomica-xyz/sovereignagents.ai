@@ -1,0 +1,41 @@
+---
+import '@fontsource-variable/fraunces/full.css';
+import '@fontsource-variable/fraunces/full-italic.css';
+import '@fontsource-variable/instrument-sans/wght.css';
+import '@fontsource-variable/jetbrains-mono/wght.css';
+import './theme.css';
+import ModeToggle from '../../components/ModeToggle.astro';
+interface Props { section?: string; crumbs: { href?: string; label: string }[] }
+const { section, crumbs } = Astro.props;
+const nav = [
+  { id: 'blueprint', href: '/blueprint/', label: 'Blueprint', n: 'I' },
+  { id: 'ecosystem', href: '/ecosystem/', label: 'Ecosystem', n: 'II' },
+  { id: 'technology', href: '/technology/', label: 'Technology', n: 'III' },
+  { id: 'about', href: '/about/', label: 'About', n: '' },
+];
+---
+<div class="deep" aria-hidden="true"><i></i><i></i><i></i></div>
+<header class="mast">
+  <div class="wrap mast-in">
+    <a class="brand" href="/" aria-label="Sovereign Agents, home">
+      <svg class="brand-cell" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="12" /><circle cx="16" cy="15" r="4.5" class="n" /></svg>
+      <span>Sovereign Agents<em>a field guide</em></span>
+    </a>
+    <nav class="nav" aria-label="Main">{nav.map((n) => <a href={n.href} aria-current={section === n.id ? 'page' : undefined}>{n.n && <span class="rn">{n.n}</span>}{n.label}</a>)}</nav>
+    <ModeToggle />
+    <button class="search-btn" type="button" data-open-search aria-label="Search (press /)"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>Search</span></button>
+  </div>
+</header>
+{crumbs.length > 0 && <nav class="wrap crumbs" aria-label="Breadcrumb"><ol>{crumbs.map((c) => <li>{c.href ? <a href={c.href}>{c.label}</a> : <span aria-current="page">{c.label}</span>}</li>)}</ol></nav>}
+<main id="main"><slot /></main>
+<footer class="foot">
+  <div class="wrap foot-in">
+    <div>
+      <p class="foot-brand">Sovereign Agents</p>
+      <p class="muted">A field guide to software that keeps itself alive. Every observation is sourced and dated; see the <a href="/ecosystem/methodology/">methodology</a>.</p>
+      <p class="theme-switch">Prefer a terminal? <ModeToggle /></p>
+    </div>
+    <ul class="foot-links"><li><a href="/blueprint/">I. Blueprint</a></li><li><a href="/ecosystem/">II. Ecosystem</a></li><li><a href="/technology/">III. Technology</a></li><li><a href="/ecosystem/developments/">Field notes</a></li></ul>
+    <ul class="foot-links"><li><a href="/about/">About</a></li><li><a href="/ecosystem/methodology/">Methodology</a></li><li><a href="https://github.com/autonomica-xyz/sovereignagents.ai">Source</a></li><li><a href="https://github.com/autonomica-xyz/sovereign-agents-research">Research notebook</a></li></ul>
+  </div>
+</footer>
